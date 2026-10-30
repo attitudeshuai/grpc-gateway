@@ -1,6 +1,6 @@
 load("@com_google_protobuf//bazel:proto_library.bzl", "proto_library")
 load("@grpc_ecosystem_grpc_gateway//protoc-gen-openapiv2:defs.bzl", "protoc_gen_openapiv2")
-load("@io_bazel_rules_go//go:def.bzl", "go_library")
+load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
 load("@io_bazel_rules_go//proto:def.bzl", "go_proto_library")
 
 package(default_visibility = ["//visibility:public"])
@@ -220,6 +220,19 @@ protoc_gen_openapiv2(
     name = "examplepb_openapi_merge",
     proto = ":openapi_merge_proto",
     single_output = True,  # Outputs a single swagger.json file.
+)
+
+go_test(
+    name = "examplepb_test",
+    srcs = ["stream_retry_test.go"],
+    embed = [":examplepb"],
+    deps = [
+        "//runtime",
+        "@org_golang_google_grpc//:grpc",
+        "@org_golang_google_grpc//codes",
+        "@org_golang_google_grpc//credentials/insecure",
+        "@org_golang_google_grpc//status",
+    ],
 )
 
 alias(

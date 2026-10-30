@@ -60,7 +60,10 @@ func request_EchoService_Echo_0(ctx context.Context, marshaler runtime.Marshaler
 	if req.Body != nil {
 		_, _ = io.Copy(io.Discard, req.Body)
 	}
-	msg, err := client.Echo(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, md, err := runtime.InvokeUnary(ctx, "/grpc.gateway.examples.internal.proto.examplepb.EchoService/Echo", func(callCtx context.Context, opts ...grpc.CallOption) (proto.Message, error) {
+		return client.Echo(callCtx, &protoReq, opts...)
+	})
+	metadata.HeaderMD, metadata.TrailerMD = md.HeaderMD, md.TrailerMD
 	return msg, metadata, err
 }
 
@@ -121,7 +124,10 @@ func request_EchoService_Echo_1(ctx context.Context, marshaler runtime.Marshaler
 	if req.Body != nil {
 		_, _ = io.Copy(io.Discard, req.Body)
 	}
-	msg, err := client.Echo(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, md, err := runtime.InvokeUnary(ctx, "/grpc.gateway.examples.internal.proto.examplepb.EchoService/Echo", func(callCtx context.Context, opts ...grpc.CallOption) (proto.Message, error) {
+		return client.Echo(callCtx, &protoReq, opts...)
+	})
+	metadata.HeaderMD, metadata.TrailerMD = md.HeaderMD, md.TrailerMD
 	return msg, metadata, err
 }
 
@@ -203,7 +209,10 @@ func request_EchoService_Echo_2(ctx context.Context, marshaler runtime.Marshaler
 	if req.Body != nil {
 		_, _ = io.Copy(io.Discard, req.Body)
 	}
-	msg, err := client.Echo(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, md, err := runtime.InvokeUnary(ctx, "/grpc.gateway.examples.internal.proto.examplepb.EchoService/Echo", func(callCtx context.Context, opts ...grpc.CallOption) (proto.Message, error) {
+		return client.Echo(callCtx, &protoReq, opts...)
+	})
+	metadata.HeaderMD, metadata.TrailerMD = md.HeaderMD, md.TrailerMD
 	return msg, metadata, err
 }
 
@@ -298,7 +307,10 @@ func request_EchoService_Echo_3(ctx context.Context, marshaler runtime.Marshaler
 	if req.Body != nil {
 		_, _ = io.Copy(io.Discard, req.Body)
 	}
-	msg, err := client.Echo(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, md, err := runtime.InvokeUnary(ctx, "/grpc.gateway.examples.internal.proto.examplepb.EchoService/Echo", func(callCtx context.Context, opts ...grpc.CallOption) (proto.Message, error) {
+		return client.Echo(callCtx, &protoReq, opts...)
+	})
+	metadata.HeaderMD, metadata.TrailerMD = md.HeaderMD, md.TrailerMD
 	return msg, metadata, err
 }
 
@@ -372,7 +384,10 @@ func request_EchoService_Echo_4(ctx context.Context, marshaler runtime.Marshaler
 	if req.Body != nil {
 		_, _ = io.Copy(io.Discard, req.Body)
 	}
-	msg, err := client.Echo(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, md, err := runtime.InvokeUnary(ctx, "/grpc.gateway.examples.internal.proto.examplepb.EchoService/Echo", func(callCtx context.Context, opts ...grpc.CallOption) (proto.Message, error) {
+		return client.Echo(callCtx, &protoReq, opts...)
+	})
+	metadata.HeaderMD, metadata.TrailerMD = md.HeaderMD, md.TrailerMD
 	return msg, metadata, err
 }
 
@@ -425,7 +440,10 @@ func request_EchoService_Echo_5(ctx context.Context, marshaler runtime.Marshaler
 	if req.Body != nil {
 		_, _ = io.Copy(io.Discard, req.Body)
 	}
-	msg, err := client.Echo(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, md, err := runtime.InvokeUnary(ctx, "/grpc.gateway.examples.internal.proto.examplepb.EchoService/Echo", func(callCtx context.Context, opts ...grpc.CallOption) (proto.Message, error) {
+		return client.Echo(callCtx, &protoReq, opts...)
+	})
+	metadata.HeaderMD, metadata.TrailerMD = md.HeaderMD, md.TrailerMD
 	return msg, metadata, err
 }
 
@@ -478,7 +496,10 @@ func request_EchoService_Echo_6(ctx context.Context, marshaler runtime.Marshaler
 	if req.Body != nil {
 		_, _ = io.Copy(io.Discard, req.Body)
 	}
-	msg, err := client.Echo(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, md, err := runtime.InvokeUnary(ctx, "/grpc.gateway.examples.internal.proto.examplepb.EchoService/Echo", func(callCtx context.Context, opts ...grpc.CallOption) (proto.Message, error) {
+		return client.Echo(callCtx, &protoReq, opts...)
+	})
+	metadata.HeaderMD, metadata.TrailerMD = md.HeaderMD, md.TrailerMD
 	return msg, metadata, err
 }
 
@@ -517,7 +538,10 @@ func request_EchoService_EchoBody_0(ctx context.Context, marshaler runtime.Marsh
 	if req.Body != nil {
 		_, _ = io.Copy(io.Discard, req.Body)
 	}
-	msg, err := client.EchoBody(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, md, err := runtime.InvokeUnary(ctx, "/grpc.gateway.examples.internal.proto.examplepb.EchoService/EchoBody", func(callCtx context.Context, opts ...grpc.CallOption) (proto.Message, error) {
+		return client.EchoBody(callCtx, &protoReq, opts...)
+	})
+	metadata.HeaderMD, metadata.TrailerMD = md.HeaderMD, md.TrailerMD
 	return msg, metadata, err
 }
 
@@ -566,7 +590,10 @@ func request_EchoService_EchoBody_1(ctx context.Context, marshaler runtime.Marsh
 	if req.Body != nil {
 		_, _ = io.Copy(io.Discard, req.Body)
 	}
-	msg, err := client.EchoBody(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, md, err := runtime.InvokeUnary(ctx, "/grpc.gateway.examples.internal.proto.examplepb.EchoService/EchoBody", func(callCtx context.Context, opts ...grpc.CallOption) (proto.Message, error) {
+		return client.EchoBody(callCtx, &protoReq, opts...)
+	})
+	metadata.HeaderMD, metadata.TrailerMD = md.HeaderMD, md.TrailerMD
 	return msg, metadata, err
 }
 
@@ -618,7 +645,10 @@ func request_EchoService_EchoDelete_0(ctx context.Context, marshaler runtime.Mar
 	if req.Body != nil {
 		_, _ = io.Copy(io.Discard, req.Body)
 	}
-	msg, err := client.EchoDelete(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, md, err := runtime.InvokeUnary(ctx, "/grpc.gateway.examples.internal.proto.examplepb.EchoService/EchoDelete", func(callCtx context.Context, opts ...grpc.CallOption) (proto.Message, error) {
+		return client.EchoDelete(callCtx, &protoReq, opts...)
+	})
+	metadata.HeaderMD, metadata.TrailerMD = md.HeaderMD, md.TrailerMD
 	return msg, metadata, err
 }
 
@@ -667,7 +697,10 @@ func request_EchoService_EchoPatch_0(ctx context.Context, marshaler runtime.Mars
 	if req.Body != nil {
 		_, _ = io.Copy(io.Discard, req.Body)
 	}
-	msg, err := client.EchoPatch(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, md, err := runtime.InvokeUnary(ctx, "/grpc.gateway.examples.internal.proto.examplepb.EchoService/EchoPatch", func(callCtx context.Context, opts ...grpc.CallOption) (proto.Message, error) {
+		return client.EchoPatch(callCtx, &protoReq, opts...)
+	})
+	metadata.HeaderMD, metadata.TrailerMD = md.HeaderMD, md.TrailerMD
 	return msg, metadata, err
 }
 
@@ -716,7 +749,10 @@ func request_EchoService_EchoUnauthorized_0(ctx context.Context, marshaler runti
 	if req.Body != nil {
 		_, _ = io.Copy(io.Discard, req.Body)
 	}
-	msg, err := client.EchoUnauthorized(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, md, err := runtime.InvokeUnary(ctx, "/grpc.gateway.examples.internal.proto.examplepb.EchoService/EchoUnauthorized", func(callCtx context.Context, opts ...grpc.CallOption) (proto.Message, error) {
+		return client.EchoUnauthorized(callCtx, &protoReq, opts...)
+	})
+	metadata.HeaderMD, metadata.TrailerMD = md.HeaderMD, md.TrailerMD
 	return msg, metadata, err
 }
 
@@ -746,7 +782,10 @@ func request_EchoService_EchoStatus_0(ctx context.Context, marshaler runtime.Mar
 	if req.Body != nil {
 		_, _ = io.Copy(io.Discard, req.Body)
 	}
-	msg, err := client.EchoStatus(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, md, err := runtime.InvokeUnary(ctx, "/grpc.gateway.examples.internal.proto.examplepb.EchoService/EchoStatus", func(callCtx context.Context, opts ...grpc.CallOption) (proto.Message, error) {
+		return client.EchoStatus(callCtx, &protoReq, opts...)
+	})
+	metadata.HeaderMD, metadata.TrailerMD = md.HeaderMD, md.TrailerMD
 	return msg, metadata, err
 }
 

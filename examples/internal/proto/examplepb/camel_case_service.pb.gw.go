@@ -54,7 +54,10 @@ func request_Camel_CaseService_GetStatus_0(ctx context.Context, marshaler runtim
 	if req.Body != nil {
 		_, _ = io.Copy(io.Discard, req.Body)
 	}
-	msg, err := client.GetStatus(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, md, err := runtime.InvokeUnary(ctx, "/grpc.gateway.examples.internal.proto.examplepb.Camel_CaseService/GetStatus", func(callCtx context.Context, opts ...grpc.CallOption) (proto.Message, error) {
+		return client.GetStatus(callCtx, &protoReq, opts...)
+	})
+	metadata.HeaderMD, metadata.TrailerMD = md.HeaderMD, md.TrailerMD
 	return msg, metadata, err
 }
 
@@ -89,7 +92,10 @@ func request_Camel_CaseService_Post_Book_0(ctx context.Context, marshaler runtim
 	if req.Body != nil {
 		_, _ = io.Copy(io.Discard, req.Body)
 	}
-	msg, err := client.Post_Book(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, md, err := runtime.InvokeUnary(ctx, "/grpc.gateway.examples.internal.proto.examplepb.Camel_CaseService/Post_Book", func(callCtx context.Context, opts ...grpc.CallOption) (proto.Message, error) {
+		return client.Post_Book(callCtx, &protoReq, opts...)
+	})
+	metadata.HeaderMD, metadata.TrailerMD = md.HeaderMD, md.TrailerMD
 	return msg, metadata, err
 }
 

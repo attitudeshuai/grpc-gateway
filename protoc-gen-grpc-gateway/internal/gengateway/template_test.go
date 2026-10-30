@@ -307,6 +307,17 @@ func TestApplyTemplateRequestWithoutClientStreaming(t *testing.T) {
 		if want := spec.sigWant; !strings.Contains(got, want) {
 			t.Errorf("applyTemplate(%#v) = %s; want to contain %s", file, got, want)
 		}
+		// Unary upstream calls go through the retry-aware runtime.InvokeUnary
+		// entry point; streaming methods must never be wrapped.
+		if spec.serverStreaming {
+			if strings.Contains(got, "runtime.InvokeUnary") {
+				t.Errorf("server-streaming method must not be wrapped in runtime.InvokeUnary:\n%s", got)
+			}
+		} else {
+			if want := `runtime.InvokeUnary(ctx, "/example.ExampleService/Echo"`; !strings.Contains(got, want) {
+				t.Errorf("unary method must invoke runtime.InvokeUnary with the full method name; got:\n%s", got)
+			}
+		}
 		if want := `marshaler.NewDecoder(req.Body).Decode(&protoReq.GetNested().Bool)`; !strings.Contains(got, want) {
 			t.Errorf("applyTemplate(%#v) = %s; want to contain %s", file, got, want)
 		}
@@ -1017,10 +1028,10 @@ func TestIdentifierCapitalization(t *testing.T) {
 		t.Errorf("applyTemplate(%#v) failed with %v; want success", file, err)
 		return
 	}
-	if want := `msg, err := client.ExampleGe2T(ctx, &protoReq, grpc.Header(&metadata.HeaderMD)`; !strings.Contains(got, want) {
+	if want := `return client.ExampleGe2T(callCtx, &protoReq, opts...)`; !strings.Contains(got, want) {
 		t.Errorf("applyTemplate(%#v) = %s; want to contain %s", file, got, want)
 	}
-	if want := `msg, err := client.ExamplEPost(ctx, &protoReq, grpc.Header(&metadata.HeaderMD)`; !strings.Contains(got, want) {
+	if want := `return client.ExamplEPost(callCtx, &protoReq, opts...)`; !strings.Contains(got, want) {
 		t.Errorf("applyTemplate(%#v) = %s; want to contain %s", file, got, want)
 	}
 	if want := `var (

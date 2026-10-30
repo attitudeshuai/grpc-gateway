@@ -53,7 +53,10 @@ func request_ResponseBodyService_GetResponseBody_0(ctx context.Context, marshale
 	if req.Body != nil {
 		_, _ = io.Copy(io.Discard, req.Body)
 	}
-	msg, err := client.GetResponseBody(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, md, err := runtime.InvokeUnary(ctx, "/grpc.gateway.examples.internal.proto.examplepb.ResponseBodyService/GetResponseBody", func(callCtx context.Context, opts ...grpc.CallOption) (proto.Message, error) {
+		return client.GetResponseBody(callCtx, &protoReq, opts...)
+	})
+	metadata.HeaderMD, metadata.TrailerMD = md.HeaderMD, md.TrailerMD
 	return msg, metadata, err
 }
 
@@ -92,7 +95,10 @@ func request_ResponseBodyService_ListResponseBodies_0(ctx context.Context, marsh
 	if req.Body != nil {
 		_, _ = io.Copy(io.Discard, req.Body)
 	}
-	msg, err := client.ListResponseBodies(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, md, err := runtime.InvokeUnary(ctx, "/grpc.gateway.examples.internal.proto.examplepb.ResponseBodyService/ListResponseBodies", func(callCtx context.Context, opts ...grpc.CallOption) (proto.Message, error) {
+		return client.ListResponseBodies(callCtx, &protoReq, opts...)
+	})
+	metadata.HeaderMD, metadata.TrailerMD = md.HeaderMD, md.TrailerMD
 	return msg, metadata, err
 }
 
@@ -131,7 +137,10 @@ func request_ResponseBodyService_ListResponseStrings_0(ctx context.Context, mars
 	if req.Body != nil {
 		_, _ = io.Copy(io.Discard, req.Body)
 	}
-	msg, err := client.ListResponseStrings(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, md, err := runtime.InvokeUnary(ctx, "/grpc.gateway.examples.internal.proto.examplepb.ResponseBodyService/ListResponseStrings", func(callCtx context.Context, opts ...grpc.CallOption) (proto.Message, error) {
+		return client.ListResponseStrings(callCtx, &protoReq, opts...)
+	})
+	metadata.HeaderMD, metadata.TrailerMD = md.HeaderMD, md.TrailerMD
 	return msg, metadata, err
 }
 
@@ -199,7 +208,10 @@ func request_ResponseBodyService_GetResponseBodySameName_0(ctx context.Context, 
 	if req.Body != nil {
 		_, _ = io.Copy(io.Discard, req.Body)
 	}
-	msg, err := client.GetResponseBodySameName(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, md, err := runtime.InvokeUnary(ctx, "/grpc.gateway.examples.internal.proto.examplepb.ResponseBodyService/GetResponseBodySameName", func(callCtx context.Context, opts ...grpc.CallOption) (proto.Message, error) {
+		return client.GetResponseBodySameName(callCtx, &protoReq, opts...)
+	})
+	metadata.HeaderMD, metadata.TrailerMD = md.HeaderMD, md.TrailerMD
 	return msg, metadata, err
 }
 
@@ -238,7 +250,10 @@ func request_ResponseBodyService_GetResponseBodyImportedType_0(ctx context.Conte
 	if req.Body != nil {
 		_, _ = io.Copy(io.Discard, req.Body)
 	}
-	msg, err := client.GetResponseBodyImportedType(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, md, err := runtime.InvokeUnary(ctx, "/grpc.gateway.examples.internal.proto.examplepb.ResponseBodyService/GetResponseBodyImportedType", func(callCtx context.Context, opts ...grpc.CallOption) (proto.Message, error) {
+		return client.GetResponseBodyImportedType(callCtx, &protoReq, opts...)
+	})
+	metadata.HeaderMD, metadata.TrailerMD = md.HeaderMD, md.TrailerMD
 	return msg, metadata, err
 }
 

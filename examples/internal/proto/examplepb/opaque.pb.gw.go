@@ -62,7 +62,10 @@ func request_OpaqueEcommerceService_OpaqueGetProduct_0(ctx context.Context, mars
 	if req.Body != nil {
 		_, _ = io.Copy(io.Discard, req.Body)
 	}
-	msg, err := client.OpaqueGetProduct(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, md, err := runtime.InvokeUnary(ctx, "/grpc.gateway.examples.internal.proto.examplepb.OpaqueEcommerceService/OpaqueGetProduct", func(callCtx context.Context, opts ...grpc.CallOption) (proto.Message, error) {
+		return client.OpaqueGetProduct(callCtx, &protoReq, opts...)
+	})
+	metadata.HeaderMD, metadata.TrailerMD = md.HeaderMD, md.TrailerMD
 	return msg, metadata, err
 }
 
@@ -132,7 +135,10 @@ func request_OpaqueEcommerceService_OpaqueCreateProduct_0(ctx context.Context, m
 	if req.Body != nil {
 		_, _ = io.Copy(io.Discard, req.Body)
 	}
-	msg, err := client.OpaqueCreateProduct(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, md, err := runtime.InvokeUnary(ctx, "/grpc.gateway.examples.internal.proto.examplepb.OpaqueEcommerceService/OpaqueCreateProduct", func(callCtx context.Context, opts ...grpc.CallOption) (proto.Message, error) {
+		return client.OpaqueCreateProduct(callCtx, &protoReq, opts...)
+	})
+	metadata.HeaderMD, metadata.TrailerMD = md.HeaderMD, md.TrailerMD
 	return msg, metadata, err
 }
 
@@ -171,7 +177,10 @@ func request_OpaqueEcommerceService_OpaqueCreateProductField_0(ctx context.Conte
 	if req.Body != nil {
 		_, _ = io.Copy(io.Discard, req.Body)
 	}
-	msg, err := client.OpaqueCreateProductField(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, md, err := runtime.InvokeUnary(ctx, "/grpc.gateway.examples.internal.proto.examplepb.OpaqueEcommerceService/OpaqueCreateProductField", func(callCtx context.Context, opts ...grpc.CallOption) (proto.Message, error) {
+		return client.OpaqueCreateProductField(callCtx, &protoReq, opts...)
+	})
+	metadata.HeaderMD, metadata.TrailerMD = md.HeaderMD, md.TrailerMD
 	return msg, metadata, err
 }
 
@@ -320,7 +329,10 @@ func request_OpaqueEcommerceService_OpaqueUpdateProduct_0(ctx context.Context, m
 	if req.Body != nil {
 		_, _ = io.Copy(io.Discard, req.Body)
 	}
-	msg, err := client.OpaqueUpdateProduct(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, md, err := runtime.InvokeUnary(ctx, "/grpc.gateway.examples.internal.proto.examplepb.OpaqueEcommerceService/OpaqueUpdateProduct", func(callCtx context.Context, opts ...grpc.CallOption) (proto.Message, error) {
+		return client.OpaqueUpdateProduct(callCtx, &protoReq, opts...)
+	})
+	metadata.HeaderMD, metadata.TrailerMD = md.HeaderMD, md.TrailerMD
 	return msg, metadata, err
 }
 
@@ -397,7 +409,10 @@ func request_OpaqueEcommerceService_OpaqueSearchOrders_0(ctx context.Context, ma
 	if req.Body != nil {
 		_, _ = io.Copy(io.Discard, req.Body)
 	}
-	msg, err := client.OpaqueSearchOrders(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, md, err := runtime.InvokeUnary(ctx, "/grpc.gateway.examples.internal.proto.examplepb.OpaqueEcommerceService/OpaqueSearchOrders", func(callCtx context.Context, opts ...grpc.CallOption) (proto.Message, error) {
+		return client.OpaqueSearchOrders(callCtx, &protoReq, opts...)
+	})
+	metadata.HeaderMD, metadata.TrailerMD = md.HeaderMD, md.TrailerMD
 	return msg, metadata, err
 }
 
@@ -446,7 +461,10 @@ func request_OpaqueEcommerceService_OpaqueEchoNote_0(ctx context.Context, marsha
 	if req.Body != nil {
 		_, _ = io.Copy(io.Discard, req.Body)
 	}
-	msg, err := client.OpaqueEchoNote(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, md, err := runtime.InvokeUnary(ctx, "/grpc.gateway.examples.internal.proto.examplepb.OpaqueEcommerceService/OpaqueEchoNote", func(callCtx context.Context, opts ...grpc.CallOption) (proto.Message, error) {
+		return client.OpaqueEchoNote(callCtx, &protoReq, opts...)
+	})
+	metadata.HeaderMD, metadata.TrailerMD = md.HeaderMD, md.TrailerMD
 	return msg, metadata, err
 }
 

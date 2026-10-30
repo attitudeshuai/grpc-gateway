@@ -46,7 +46,10 @@ func request_LoginService_Login_0(ctx context.Context, marshaler runtime.Marshal
 	if req.Body != nil {
 		_, _ = io.Copy(io.Discard, req.Body)
 	}
-	msg, err := client.Login(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, md, err := runtime.InvokeUnary(ctx, "/grpc.gateway.examples.internal.proto.examplepb.LoginService/Login", func(callCtx context.Context, opts ...grpc.CallOption) (proto.Message, error) {
+		return client.Login(callCtx, &protoReq, opts...)
+	})
+	metadata.HeaderMD, metadata.TrailerMD = md.HeaderMD, md.TrailerMD
 	return msg, metadata, err
 }
 
@@ -73,7 +76,10 @@ func request_LoginService_Logout_0(ctx context.Context, marshaler runtime.Marsha
 	if req.Body != nil {
 		_, _ = io.Copy(io.Discard, req.Body)
 	}
-	msg, err := client.Logout(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, md, err := runtime.InvokeUnary(ctx, "/grpc.gateway.examples.internal.proto.examplepb.LoginService/Logout", func(callCtx context.Context, opts ...grpc.CallOption) (proto.Message, error) {
+		return client.Logout(callCtx, &protoReq, opts...)
+	})
+	metadata.HeaderMD, metadata.TrailerMD = md.HeaderMD, md.TrailerMD
 	return msg, metadata, err
 }
 

@@ -139,6 +139,21 @@ func annotateContext(ctx context.Context, mux *ServeMux, req *http.Request, rpcM
 	for _, o := range options {
 		ctx = o(ctx)
 	}
+	// Make the mux's retry declarations available to the generated request
+	// function. The HTTP request context only gates whether another retry
+	// attempt is started; it is deliberately not the parent of the upstream
+	// call context, so in-flight call semantics are unchanged.
+	if mux.retryPolicies != nil {
+		observer := mux.retryObserver
+		if observer == nil {
+			observer = func(RetryStats) {}
+		}
+		ctx = withRetryContext(ctx, retryContextData{
+			policies:   mux.retryPolicies,
+			observer:   observer,
+			clientDone: req.Context().Done(),
+		})
+	}
 	timeout := DefaultContextTimeout
 	if tm := req.Header.Get(metadataGrpcTimeout); tm != "" {
 		var err error

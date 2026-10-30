@@ -79,6 +79,9 @@ type ServeMux struct {
 	writeContentLength        bool
 	disableChunkedEncoding    bool
 	strictDeepWildcard        bool
+	retryPolicyEntries        []retryPolicyEntry
+	retryPolicies             *retryPolicySet
+	retryObserver             RetryObserver
 }
 
 // ServeMuxOption is an option that can be given to a ServeMux on construction.
@@ -317,6 +320,48 @@ func WithWriteContentLength() ServeMuxOption {
 	}
 }
 
+// WithRetryPolicies declares retry policies for unary upstream calls, keyed
+// by service or fully qualified method. A service key has the form
+// "/package.Service" and applies to every method of the service; a method key
+// has the form "/package.Service/Method" and takes precedence over the
+// service-wide policy.
+//
+// Without a declaration for a service or method, its upstream calls are never
+// retried and keep their existing behavior exactly. Streaming methods are
+// never retried regardless of any policy.
+func WithRetryPolicies(policies map[string]RetryPolicy) ServeMuxOption {
+	return func(serveMux *ServeMux) {
+		for target, policy := range policies {
+			serveMux.retryPolicyEntries = append(serveMux.retryPolicyEntries, retryPolicyEntry{
+				target: target,
+				policy: policy,
+			})
+		}
+	}
+}
+
+// WithRetryPolicy declares a single retry policy for the given service
+// ("/package.Service") or method ("/package.Service/Method"). See
+// WithRetryPolicies for semantics.
+func WithRetryPolicy(target string, policy RetryPolicy) ServeMuxOption {
+	return func(serveMux *ServeMux) {
+		serveMux.retryPolicyEntries = append(serveMux.retryPolicyEntries, retryPolicyEntry{
+			target: target,
+			policy: policy,
+		})
+	}
+}
+
+// WithRetryObserver registers an observer that is notified once for every
+// incoming request matching a declared retry policy. The observer receives the
+// number of upstream attempts and the outcome (succeeded on the first attempt,
+// succeeded after a retry, or budget exhausted, among others).
+func WithRetryObserver(observer RetryObserver) ServeMuxOption {
+	return func(serveMux *ServeMux) {
+		serveMux.retryObserver = observer
+	}
+}
+
 // WithHealthEndpointAt returns a ServeMuxOption that will add an endpoint to the created ServeMux at the path specified by endpointPath.
 // When called the handler will forward the request to the upstream grpc service health check (defined in the
 // gRPC Health Checking Protocol).
@@ -399,6 +444,14 @@ func NewServeMux(opts ...ServeMuxOption) *ServeMux {
 	}
 	if serveMux.outgoingTrailerMatcher == nil {
 		serveMux.outgoingTrailerMatcher = defaultOutgoingTrailerMatcher
+	}
+
+	if len(serveMux.retryPolicyEntries) > 0 {
+		retryPolicies, err := newRetryPolicySet(serveMux.retryPolicyEntries)
+		if err != nil {
+			panic(err)
+		}
+		serveMux.retryPolicies = retryPolicies
 	}
 
 	// Options such as WithHealthEndpointAt register handlers while the options

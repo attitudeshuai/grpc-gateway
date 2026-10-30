@@ -51,7 +51,10 @@ func request_Proto3FieldSemanticsService_GetFilter_0(ctx context.Context, marsha
 	if req.Body != nil {
 		_, _ = io.Copy(io.Discard, req.Body)
 	}
-	msg, err := client.GetFilter(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, md, err := runtime.InvokeUnary(ctx, "/grpc.gateway.examples.internal.proto.examplepb.Proto3FieldSemanticsService/GetFilter", func(callCtx context.Context, opts ...grpc.CallOption) (proto.Message, error) {
+		return client.GetFilter(callCtx, &protoReq, opts...)
+	})
+	metadata.HeaderMD, metadata.TrailerMD = md.HeaderMD, md.TrailerMD
 	return msg, metadata, err
 }
 

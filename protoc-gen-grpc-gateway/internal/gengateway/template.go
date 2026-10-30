@@ -547,7 +547,10 @@ var filter_{{ .Method.Service.GetName }}_{{ .Method.GetName }}_{{ .Index }} = {{
 	metadata.HeaderMD = header
 	return stream, metadata, nil
 {{- else }}
-	msg, err := client.{{ .Method.GetName }}(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, md, err := runtime.InvokeUnary(ctx, "/{{ .Method.Service.File.GetPackage }}.{{ .Method.Service.GetName }}/{{ .Method.GetName }}", func(callCtx context.Context, opts ...grpc.CallOption) (proto.Message, error) {
+		return client.{{ .Method.GetName }}(callCtx, &protoReq, opts...)
+	})
+	metadata.HeaderMD, metadata.TrailerMD = md.HeaderMD, md.TrailerMD
 	return msg, metadata, err
 {{- end }}
 }`))
