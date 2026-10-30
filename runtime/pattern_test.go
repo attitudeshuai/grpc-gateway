@@ -3,6 +3,8 @@ package runtime
 import (
 	"errors"
 	"fmt"
+	"os"
+	"os/exec"
 	"reflect"
 	"strings"
 	"testing"
@@ -758,5 +760,184 @@ func TestMatchStrictDeepWildcard(t *testing.T) {
 				t.Errorf("pat.MatchAndEscape(%q) succeeded; want ErrNotMatch; pattern = %v", path, pat)
 			}
 		}
+	}
+}
+
+func TestNewPatternInvalidLiteralSegments(t *testing.T) {
+	litPush := func(operand int) []int {
+		return []int{int(utilities.OpLitPush), operand}
+	}
+	for _, spec := range []struct {
+		name        string
+		ops         []int
+		pool        []string
+		wantSegment string
+		wantLiteral string
+	}{
+		{
+			name:        "dot dot at segment one",
+			ops:         append(litPush(0), litPush(1)...),
+			pool:        []string{"v1", ".."},
+			wantSegment: "segment 1",
+			wantLiteral: `".."`,
+		},
+		{
+			name:        "single dot at segment zero",
+			ops:         litPush(0),
+			pool:        []string{"."},
+			wantSegment: "segment 0",
+			wantLiteral: `"."`,
+		},
+		{
+			name: "dot after deep wildcard",
+			ops: append(append(litPush(0),
+				int(utilities.OpPushM), 0), litPush(1)...),
+			pool:        []string{"v1", ".."},
+			wantSegment: "segment 2",
+			wantLiteral: `".."`,
+		},
+		{
+			name:        "control character",
+			ops:         litPush(0),
+			pool:        []string{"a\x00b"},
+			wantSegment: "segment 0",
+			wantLiteral: "control character",
+		},
+		{
+			name:        "invalid utf8",
+			ops:         litPush(0),
+			pool:        []string{"a\xffb"},
+			wantSegment: "segment 0",
+			wantLiteral: "invalid UTF-8",
+		},
+		{
+			name:        "overlong literal",
+			ops:         litPush(0),
+			pool:        []string{strings.Repeat("a", DefaultMaxPathSegmentLength+1)},
+			wantSegment: "segment 0",
+			wantLiteral: "exceeds the limit",
+		},
+	} {
+		t.Run(spec.name, func(t *testing.T) {
+			_, err := NewPattern(validVersion, spec.ops, spec.pool, "")
+			if err == nil {
+				t.Fatalf("NewPattern with pool %v succeeded; want error", spec.pool)
+			}
+			if !errors.Is(err, ErrInvalidPattern) {
+				t.Errorf("error %v does not wrap ErrInvalidPattern", err)
+			}
+			if !strings.Contains(err.Error(), spec.wantSegment) {
+				t.Errorf("error %q does not contain %q", err.Error(), spec.wantSegment)
+			}
+			if !strings.Contains(err.Error(), spec.wantLiteral) {
+				t.Errorf("error %q does not contain %q", err.Error(), spec.wantLiteral)
+			}
+		})
+	}
+}
+
+func TestNewPatternLiteralValidationAllowsValidTemplates(t *testing.T) {
+	for _, spec := range []struct {
+		name string
+		ops  []int
+		pool []string
+	}{
+		{
+			// The root template "/" compiles to a single empty literal.
+			name: "root empty literal",
+			ops:  []int{int(utilities.OpLitPush), 0},
+			pool: []string{""},
+		},
+		{
+			// Dots inside a literal ("a.b", "v2.0") are not dot segments.
+			name: "literal containing dots",
+			ops:  []int{int(utilities.OpLitPush), 0, int(utilities.OpLitPush), 1},
+			pool: []string{"a.b", "v2.0"},
+		},
+		{
+			// A dotted field path is an OpCapture operand, not a literal
+			// segment, and must not be rejected.
+			name: "dotted field path capture",
+			ops: []int{
+				int(utilities.OpLitPush), 0,
+				int(utilities.OpPush), 0,
+				int(utilities.OpConcatN), 1,
+				int(utilities.OpCapture), 1,
+			},
+			pool: []string{"v1", "id.value"},
+		},
+		{
+			name: "deep wildcard with tail literals",
+			ops: []int{
+				int(utilities.OpLitPush), 0,
+				int(utilities.OpPushM), 0,
+				int(utilities.OpLitPush), 1,
+			},
+			pool: []string{"v1", "tail"},
+		},
+	} {
+		t.Run(spec.name, func(t *testing.T) {
+			pat, err := NewPattern(validVersion, spec.ops, spec.pool, "")
+			if err != nil {
+				t.Fatalf("NewPattern with %v failed: %v", spec.pool, err)
+			}
+			// MustPattern returns the same pattern on success. Its failure
+			// branch calls grpclog.Fatalf (os.Exit) and cannot be exercised
+			// in-process; the NewPattern error cases above cover every
+			// rejection that MustPattern would fatally report.
+			if got := MustPattern(pat, nil); len(got.ops) != len(pat.ops) {
+				t.Errorf("MustPattern changed the pattern: %v vs %v", got, pat)
+			}
+		})
+	}
+}
+
+func TestValidatePatternLiteral(t *testing.T) {
+	for _, tc := range []struct {
+		lit     string
+		segment int
+		wantErr bool
+	}{
+		{".", 0, true},
+		{"..", 3, true},
+		{"\x7f", 1, true},
+		{"\xff", 0, true},
+		{strings.Repeat("x", DefaultMaxPathSegmentLength+1), 2, true},
+		{"", 0, false},
+		{"a.b", 0, false},
+		{strings.Repeat("x", DefaultMaxPathSegmentLength), 0, false},
+	} {
+		err := validatePatternLiteral(tc.lit, tc.segment)
+		if tc.wantErr {
+			if err == nil || !errors.Is(err, ErrInvalidPattern) {
+				t.Errorf("validatePatternLiteral(%q, %d) = %v; want ErrInvalidPattern", tc.lit, tc.segment, err)
+			}
+			continue
+		}
+		if err != nil {
+			t.Errorf("validatePatternLiteral(%q, %d) = %v; want nil", tc.lit, tc.segment, err)
+		}
+	}
+}
+
+// TestMustPatternFatalOnInvalidLiteral exercises MustPattern's fatal branch
+// in a re-executed child process: grpclog.Fatalf terminates with os.Exit(1)
+// when the wrapped pattern construction fails.
+func TestMustPatternFatalOnInvalidLiteral(t *testing.T) {
+	const envVar = "GRPC_GATEWAY_MUSTPATTERN_FATAL_CHILD"
+	if os.Getenv(envVar) == "1" {
+		MustPattern(NewPattern(validVersion,
+			[]int{int(utilities.OpLitPush), 0}, []string{".."}, ""))
+		return
+	}
+	cmd := exec.Command(os.Args[0], "-test.run=^TestMustPatternFatalOnInvalidLiteral$")
+	cmd.Env = append(os.Environ(), envVar+"=1")
+	err := cmd.Run()
+	var exitErr *exec.ExitError
+	if err == nil {
+		t.Fatal("child process exited successfully; want non-zero exit for invalid pattern")
+	}
+	if !errors.As(err, &exitErr) || exitErr.ExitCode() != 1 {
+		t.Fatalf("child error = %v; want exit status 1", err)
 	}
 }

@@ -79,6 +79,10 @@ type ServeMux struct {
 	writeContentLength        bool
 	disableChunkedEncoding    bool
 	strictDeepWildcard        bool
+	// pathPolicies is the immutable snapshot of path normalization rules,
+	// sorted longest prefix first. It is nil for muxes constructed without
+	// WithPathNormalization, leaving the request hot path exactly as it was.
+	pathPolicies []pathPolicy
 }
 
 // ServeMuxOption is an option that can be given to a ServeMux on construction.
@@ -119,6 +123,34 @@ func WithForwardResponseOption(forwardResponseOption func(context.Context, http.
 func WithUnescapingMode(mode UnescapingMode) ServeMuxOption {
 	return func(serveMux *ServeMux) {
 		serveMux.unescapingMode = mode
+	}
+}
+
+// WithPathNormalization declares per-prefix rules that decode, validate and
+// normalize request path segments exactly once, after the path is split and
+// percent-decoded and before any pattern is matched. The normalized segments
+// are used for both route matching and captured path parameter values.
+//
+// A request only follows the normalization pipeline when it matches the
+// longest declared rule prefix; every other request keeps the mux's exact
+// historical behavior. The rules are compiled once in NewServeMux into an
+// immutable snapshot that is never mutated afterwards, so concurrent requests
+// always read the same configuration. Invalid rules panic at construction.
+//
+// The option does not add any proxy or middleware layer, does not rewrite the
+// query string or request body, and does not change match priority, verb
+// suffix handling, trailing slash semantics or deep wildcard selection.
+//
+// Covered segments are decoded once with the mux's configured
+// UnescapingMode before they are validated and normalized. Multi-segment
+// captures (deep wildcards) stay byte-for-byte identical to the historical
+// capture; a single-segment capture reflects the configured mode faithfully,
+// so e.g. reserved characters and "%2F" remain percent-encoded under
+// UnescapingModeAllExceptReserved/AllExceptSlash where the historical matcher
+// decoded them fully.
+func WithPathNormalization(rules ...PathNormalizationRule) ServeMuxOption {
+	return func(serveMux *ServeMux) {
+		serveMux.pathPolicies = compilePathPolicies(rules...)
 	}
 }
 
@@ -485,6 +517,29 @@ func (s *ServeMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		pathComponents = encodedPathSplitter.Split(path[1:], -1)
 	} else {
 		pathComponents = strings.Split(path[1:], "/")
+	}
+
+	// Path normalization runs at most once per request, and only when the
+	// request is covered by a declared prefix rule: it decodes the already
+	// split segments, validates their content and length, and resolves dot
+	// and empty segments. Rejections are answered here, before any pattern
+	// is matched and before any handler or fallback path can run.
+	if len(s.pathPolicies) > 0 {
+		if policy := selectPathPolicy(s.pathPolicies, pathComponents, unescapingMode); policy != nil {
+			normalized, err := normalizePathComponents(pathComponents, unescapingMode, policy)
+			if err != nil {
+				_, outboundMarshaler := MarshalerForRequest(s, r)
+				s.errorHandler(ctx, s, outboundMarshaler, w, r, &HTTPStatusError{
+					HTTPStatus: http.StatusBadRequest,
+					Err:        err,
+				})
+				return
+			}
+			pathComponents = normalized
+			// The components were decoded once during normalization, so the
+			// matcher must consume them as-is instead of decoding them again.
+			unescapingMode = UnescapingModeLegacy
+		}
 	}
 
 	lastPathComponent := pathComponents[len(pathComponents)-1]

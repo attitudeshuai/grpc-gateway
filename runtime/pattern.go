@@ -88,6 +88,7 @@ func NewPatternWithOptions(version int, ops []int, pool []string, verb string, o
 		tailLen         int
 		pushMSeen       bool
 		vars            []string
+		segmentIdx      int
 	)
 	for i := 0; i < l; i += 2 {
 		op := op{code: utilities.OpCode(ops[i]), operand: ops[i+1]}
@@ -99,6 +100,7 @@ func NewPatternWithOptions(version int, ops []int, pool []string, verb string, o
 				tailLen++
 			}
 			stack++
+			segmentIdx++
 		case utilities.OpPushM:
 			if pushMSeen {
 				grpclog.Error("pushM appears twice")
@@ -106,15 +108,21 @@ func NewPatternWithOptions(version int, ops []int, pool []string, verb string, o
 			}
 			pushMSeen = true
 			stack++
+			segmentIdx++
 		case utilities.OpLitPush:
 			if op.operand < 0 || len(pool) <= op.operand {
 				grpclog.Errorf("negative literal index: %d", op.operand)
 				return Pattern{}, ErrInvalidPattern
 			}
+			if err := validatePatternLiteral(pool[op.operand], segmentIdx); err != nil {
+				grpclog.Error(err.Error())
+				return Pattern{}, err
+			}
 			if pushMSeen {
 				tailLen++
 			}
 			stack++
+			segmentIdx++
 		case utilities.OpConcatN:
 			if op.operand <= 0 {
 				grpclog.Errorf("negative concat size: %d", op.operand)
