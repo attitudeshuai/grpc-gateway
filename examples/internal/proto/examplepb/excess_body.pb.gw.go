@@ -133,7 +133,7 @@ func request_ExcessBodyService_WithBodyServerStream_0(ctx context.Context, marsh
 // Note that using this registration option will cause many gRPC library features to stop working. Consider using RegisterExcessBodyServiceHandlerFromEndpoint instead.
 // GRPC interceptors will not work for this type of registration. To use interceptors, you must use the "runtime.WithMiddlewares" option in the "runtime.NewServeMux" call.
 func RegisterExcessBodyServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux, server ExcessBodyServiceServer) error {
-	mux.Handle(http.MethodPost, pattern_ExcessBodyService_NoBodyRpc_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle(http.MethodPost, pattern_ExcessBodyService_NoBodyRpc_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ExcessBodyService/NoBodyRpc", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -152,7 +152,7 @@ func RegisterExcessBodyServiceHandlerServer(ctx context.Context, mux *runtime.Se
 			return
 		}
 		forward_ExcessBodyService_NoBodyRpc_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
+	}))
 
 	mux.Handle(http.MethodPost, pattern_ExcessBodyService_NoBodyServerStream_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		err := status.Error(codes.Unimplemented, "streaming calls are not yet supported in the in-process transport")
@@ -160,7 +160,7 @@ func RegisterExcessBodyServiceHandlerServer(ctx context.Context, mux *runtime.Se
 		runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 		return
 	})
-	mux.Handle(http.MethodPost, pattern_ExcessBodyService_WithBodyRpc_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle(http.MethodPost, pattern_ExcessBodyService_WithBodyRpc_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ExcessBodyService/WithBodyRpc", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -179,7 +179,7 @@ func RegisterExcessBodyServiceHandlerServer(ctx context.Context, mux *runtime.Se
 			return
 		}
 		forward_ExcessBodyService_WithBodyRpc_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
+	}))
 
 	mux.Handle(http.MethodPost, pattern_ExcessBodyService_WithBodyServerStream_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		err := status.Error(codes.Unimplemented, "streaming calls are not yet supported in the in-process transport")
@@ -227,7 +227,7 @@ func RegisterExcessBodyServiceHandler(ctx context.Context, mux *runtime.ServeMux
 // doesn't go through the normal gRPC flow (creating a gRPC client etc.) then it will be up to the passed in
 // "ExcessBodyServiceClient" to call the correct interceptors. This client ignores the HTTP middlewares.
 func RegisterExcessBodyServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux, client ExcessBodyServiceClient) error {
-	mux.Handle(http.MethodPost, pattern_ExcessBodyService_NoBodyRpc_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle(http.MethodPost, pattern_ExcessBodyService_NoBodyRpc_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ExcessBodyService/NoBodyRpc", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -243,8 +243,8 @@ func RegisterExcessBodyServiceHandlerClient(ctx context.Context, mux *runtime.Se
 			return
 		}
 		forward_ExcessBodyService_NoBodyRpc_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodPost, pattern_ExcessBodyService_NoBodyServerStream_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodPost, pattern_ExcessBodyService_NoBodyServerStream_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ExcessBodyService/NoBodyServerStream", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -260,8 +260,8 @@ func RegisterExcessBodyServiceHandlerClient(ctx context.Context, mux *runtime.Se
 			return
 		}
 		forward_ExcessBodyService_NoBodyServerStream_0(annotatedContext, mux, outboundMarshaler, w, req, func() (proto.Message, error) { return resp.Recv() }, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodPost, pattern_ExcessBodyService_WithBodyRpc_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodPost, pattern_ExcessBodyService_WithBodyRpc_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ExcessBodyService/WithBodyRpc", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -277,8 +277,8 @@ func RegisterExcessBodyServiceHandlerClient(ctx context.Context, mux *runtime.Se
 			return
 		}
 		forward_ExcessBodyService_WithBodyRpc_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodPost, pattern_ExcessBodyService_WithBodyServerStream_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodPost, pattern_ExcessBodyService_WithBodyServerStream_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ExcessBodyService/WithBodyServerStream", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -294,7 +294,7 @@ func RegisterExcessBodyServiceHandlerClient(ctx context.Context, mux *runtime.Se
 			return
 		}
 		forward_ExcessBodyService_WithBodyServerStream_0(annotatedContext, mux, outboundMarshaler, w, req, func() (proto.Message, error) { return resp.Recv() }, mux.GetForwardResponseOptions()...)
-	})
+	}))
 	return nil
 }
 

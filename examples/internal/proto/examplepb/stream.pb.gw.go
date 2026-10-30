@@ -300,7 +300,7 @@ func RegisterStreamServiceHandler(ctx context.Context, mux *runtime.ServeMux, co
 // doesn't go through the normal gRPC flow (creating a gRPC client etc.) then it will be up to the passed in
 // "StreamServiceClient" to call the correct interceptors. This client ignores the HTTP middlewares.
 func RegisterStreamServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux, client StreamServiceClient) error {
-	mux.Handle(http.MethodPost, pattern_StreamService_BulkCreate_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle(http.MethodPost, pattern_StreamService_BulkCreate_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.StreamService/BulkCreate", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -316,8 +316,8 @@ func RegisterStreamServiceHandlerClient(ctx context.Context, mux *runtime.ServeM
 			return
 		}
 		forward_StreamService_BulkCreate_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodGet, pattern_StreamService_List_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodGet, pattern_StreamService_List_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.StreamService/List", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -333,8 +333,8 @@ func RegisterStreamServiceHandlerClient(ctx context.Context, mux *runtime.ServeM
 			return
 		}
 		forward_StreamService_List_0(annotatedContext, mux, outboundMarshaler, w, req, func() (proto.Message, error) { return resp.Recv() }, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodPost, pattern_StreamService_BulkEcho_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodPost, pattern_StreamService_BulkEcho_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.StreamService/BulkEcho", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -350,8 +350,8 @@ func RegisterStreamServiceHandlerClient(ctx context.Context, mux *runtime.ServeM
 			return
 		}
 		forward_StreamService_BulkEcho_0(annotatedContext, mux, outboundMarshaler, w, req, func() (proto.Message, error) { return resp.Recv() }, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodPost, pattern_StreamService_BulkEchoDuration_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodPost, pattern_StreamService_BulkEchoDuration_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.StreamService/BulkEchoDuration", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -367,8 +367,8 @@ func RegisterStreamServiceHandlerClient(ctx context.Context, mux *runtime.ServeM
 			return
 		}
 		forward_StreamService_BulkEchoDuration_0(annotatedContext, mux, outboundMarshaler, w, req, func() (proto.Message, error) { return resp.Recv() }, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodGet, pattern_StreamService_Download_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodGet, pattern_StreamService_Download_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.StreamService/Download", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -384,7 +384,7 @@ func RegisterStreamServiceHandlerClient(ctx context.Context, mux *runtime.ServeM
 			return
 		}
 		forward_StreamService_Download_0(annotatedContext, mux, outboundMarshaler, w, req, func() (proto.Message, error) { return resp.Recv() }, mux.GetForwardResponseOptions()...)
-	})
+	}))
 	return nil
 }
 

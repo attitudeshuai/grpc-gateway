@@ -470,7 +470,7 @@ func local_request_OpaqueEcommerceService_OpaqueEchoNote_0(ctx context.Context, 
 // Note that using this registration option will cause many gRPC library features to stop working. Consider using RegisterOpaqueEcommerceServiceHandlerFromEndpoint instead.
 // GRPC interceptors will not work for this type of registration. To use interceptors, you must use the "runtime.WithMiddlewares" option in the "runtime.NewServeMux" call.
 func RegisterOpaqueEcommerceServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux, server OpaqueEcommerceServiceServer) error {
-	mux.Handle(http.MethodGet, pattern_OpaqueEcommerceService_OpaqueGetProduct_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle(http.MethodGet, pattern_OpaqueEcommerceService_OpaqueGetProduct_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.OpaqueEcommerceService/OpaqueGetProduct", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -489,7 +489,7 @@ func RegisterOpaqueEcommerceServiceHandlerServer(ctx context.Context, mux *runti
 			return
 		}
 		forward_OpaqueEcommerceService_OpaqueGetProduct_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
+	}))
 
 	mux.Handle(http.MethodGet, pattern_OpaqueEcommerceService_OpaqueSearchProducts_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		err := status.Error(codes.Unimplemented, "streaming calls are not yet supported in the in-process transport")
@@ -497,7 +497,7 @@ func RegisterOpaqueEcommerceServiceHandlerServer(ctx context.Context, mux *runti
 		runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 		return
 	})
-	mux.Handle(http.MethodPost, pattern_OpaqueEcommerceService_OpaqueCreateProduct_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle(http.MethodPost, pattern_OpaqueEcommerceService_OpaqueCreateProduct_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.OpaqueEcommerceService/OpaqueCreateProduct", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -516,8 +516,8 @@ func RegisterOpaqueEcommerceServiceHandlerServer(ctx context.Context, mux *runti
 			return
 		}
 		forward_OpaqueEcommerceService_OpaqueCreateProduct_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodPost, pattern_OpaqueEcommerceService_OpaqueCreateProductField_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodPost, pattern_OpaqueEcommerceService_OpaqueCreateProductField_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.OpaqueEcommerceService/OpaqueCreateProductField", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -536,7 +536,7 @@ func RegisterOpaqueEcommerceServiceHandlerServer(ctx context.Context, mux *runti
 			return
 		}
 		forward_OpaqueEcommerceService_OpaqueCreateProductField_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
+	}))
 
 	mux.Handle(http.MethodPost, pattern_OpaqueEcommerceService_OpaqueProcessOrders_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		err := status.Error(codes.Unimplemented, "streaming calls are not yet supported in the in-process transport")
@@ -551,7 +551,7 @@ func RegisterOpaqueEcommerceServiceHandlerServer(ctx context.Context, mux *runti
 		runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 		return
 	})
-	mux.Handle(http.MethodPatch, pattern_OpaqueEcommerceService_OpaqueUpdateProduct_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle(http.MethodPatch, pattern_OpaqueEcommerceService_OpaqueUpdateProduct_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.OpaqueEcommerceService/OpaqueUpdateProduct", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -570,8 +570,8 @@ func RegisterOpaqueEcommerceServiceHandlerServer(ctx context.Context, mux *runti
 			return
 		}
 		forward_OpaqueEcommerceService_OpaqueUpdateProduct_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodGet, pattern_OpaqueEcommerceService_OpaqueSearchOrders_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodGet, pattern_OpaqueEcommerceService_OpaqueSearchOrders_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.OpaqueEcommerceService/OpaqueSearchOrders", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -590,8 +590,8 @@ func RegisterOpaqueEcommerceServiceHandlerServer(ctx context.Context, mux *runti
 			return
 		}
 		forward_OpaqueEcommerceService_OpaqueSearchOrders_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodPost, pattern_OpaqueEcommerceService_OpaqueEchoNote_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodPost, pattern_OpaqueEcommerceService_OpaqueEchoNote_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.OpaqueEcommerceService/OpaqueEchoNote", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -610,7 +610,7 @@ func RegisterOpaqueEcommerceServiceHandlerServer(ctx context.Context, mux *runti
 			return
 		}
 		forward_OpaqueEcommerceService_OpaqueEchoNote_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
+	}))
 
 	return nil
 }
@@ -651,7 +651,7 @@ func RegisterOpaqueEcommerceServiceHandler(ctx context.Context, mux *runtime.Ser
 // doesn't go through the normal gRPC flow (creating a gRPC client etc.) then it will be up to the passed in
 // "OpaqueEcommerceServiceClient" to call the correct interceptors. This client ignores the HTTP middlewares.
 func RegisterOpaqueEcommerceServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux, client OpaqueEcommerceServiceClient) error {
-	mux.Handle(http.MethodGet, pattern_OpaqueEcommerceService_OpaqueGetProduct_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle(http.MethodGet, pattern_OpaqueEcommerceService_OpaqueGetProduct_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.OpaqueEcommerceService/OpaqueGetProduct", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -667,8 +667,8 @@ func RegisterOpaqueEcommerceServiceHandlerClient(ctx context.Context, mux *runti
 			return
 		}
 		forward_OpaqueEcommerceService_OpaqueGetProduct_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodGet, pattern_OpaqueEcommerceService_OpaqueSearchProducts_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodGet, pattern_OpaqueEcommerceService_OpaqueSearchProducts_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.OpaqueEcommerceService/OpaqueSearchProducts", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -684,8 +684,8 @@ func RegisterOpaqueEcommerceServiceHandlerClient(ctx context.Context, mux *runti
 			return
 		}
 		forward_OpaqueEcommerceService_OpaqueSearchProducts_0(annotatedContext, mux, outboundMarshaler, w, req, func() (proto.Message, error) { return resp.Recv() }, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodPost, pattern_OpaqueEcommerceService_OpaqueCreateProduct_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodPost, pattern_OpaqueEcommerceService_OpaqueCreateProduct_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.OpaqueEcommerceService/OpaqueCreateProduct", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -701,8 +701,8 @@ func RegisterOpaqueEcommerceServiceHandlerClient(ctx context.Context, mux *runti
 			return
 		}
 		forward_OpaqueEcommerceService_OpaqueCreateProduct_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodPost, pattern_OpaqueEcommerceService_OpaqueCreateProductField_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodPost, pattern_OpaqueEcommerceService_OpaqueCreateProductField_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.OpaqueEcommerceService/OpaqueCreateProductField", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -718,8 +718,8 @@ func RegisterOpaqueEcommerceServiceHandlerClient(ctx context.Context, mux *runti
 			return
 		}
 		forward_OpaqueEcommerceService_OpaqueCreateProductField_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodPost, pattern_OpaqueEcommerceService_OpaqueProcessOrders_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodPost, pattern_OpaqueEcommerceService_OpaqueProcessOrders_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.OpaqueEcommerceService/OpaqueProcessOrders", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -735,8 +735,8 @@ func RegisterOpaqueEcommerceServiceHandlerClient(ctx context.Context, mux *runti
 			return
 		}
 		forward_OpaqueEcommerceService_OpaqueProcessOrders_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodPost, pattern_OpaqueEcommerceService_OpaqueStreamCustomerActivity_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodPost, pattern_OpaqueEcommerceService_OpaqueStreamCustomerActivity_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.OpaqueEcommerceService/OpaqueStreamCustomerActivity", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -752,8 +752,8 @@ func RegisterOpaqueEcommerceServiceHandlerClient(ctx context.Context, mux *runti
 			return
 		}
 		forward_OpaqueEcommerceService_OpaqueStreamCustomerActivity_0(annotatedContext, mux, outboundMarshaler, w, req, func() (proto.Message, error) { return resp.Recv() }, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodPatch, pattern_OpaqueEcommerceService_OpaqueUpdateProduct_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodPatch, pattern_OpaqueEcommerceService_OpaqueUpdateProduct_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.OpaqueEcommerceService/OpaqueUpdateProduct", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -769,8 +769,8 @@ func RegisterOpaqueEcommerceServiceHandlerClient(ctx context.Context, mux *runti
 			return
 		}
 		forward_OpaqueEcommerceService_OpaqueUpdateProduct_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodGet, pattern_OpaqueEcommerceService_OpaqueSearchOrders_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodGet, pattern_OpaqueEcommerceService_OpaqueSearchOrders_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.OpaqueEcommerceService/OpaqueSearchOrders", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -786,8 +786,8 @@ func RegisterOpaqueEcommerceServiceHandlerClient(ctx context.Context, mux *runti
 			return
 		}
 		forward_OpaqueEcommerceService_OpaqueSearchOrders_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodPost, pattern_OpaqueEcommerceService_OpaqueEchoNote_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodPost, pattern_OpaqueEcommerceService_OpaqueEchoNote_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.OpaqueEcommerceService/OpaqueEchoNote", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -803,7 +803,7 @@ func RegisterOpaqueEcommerceServiceHandlerClient(ctx context.Context, mux *runti
 			return
 		}
 		forward_OpaqueEcommerceService_OpaqueEchoNote_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
+	}))
 	return nil
 }
 

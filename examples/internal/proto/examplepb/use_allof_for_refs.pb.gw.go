@@ -80,7 +80,7 @@ func local_request_UseAllOfForRefsService_GetExample_0(ctx context.Context, mars
 // Note that using this registration option will cause many gRPC library features to stop working. Consider using RegisterUseAllOfForRefsServiceHandlerFromEndpoint instead.
 // GRPC interceptors will not work for this type of registration. To use interceptors, you must use the "runtime.WithMiddlewares" option in the "runtime.NewServeMux" call.
 func RegisterUseAllOfForRefsServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux, server UseAllOfForRefsServiceServer) error {
-	mux.Handle(http.MethodGet, pattern_UseAllOfForRefsService_GetExample_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle(http.MethodGet, pattern_UseAllOfForRefsService_GetExample_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.UseAllOfForRefsService/GetExample", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -99,7 +99,7 @@ func RegisterUseAllOfForRefsServiceHandlerServer(ctx context.Context, mux *runti
 			return
 		}
 		forward_UseAllOfForRefsService_GetExample_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
+	}))
 
 	return nil
 }
@@ -140,7 +140,7 @@ func RegisterUseAllOfForRefsServiceHandler(ctx context.Context, mux *runtime.Ser
 // doesn't go through the normal gRPC flow (creating a gRPC client etc.) then it will be up to the passed in
 // "UseAllOfForRefsServiceClient" to call the correct interceptors. This client ignores the HTTP middlewares.
 func RegisterUseAllOfForRefsServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux, client UseAllOfForRefsServiceClient) error {
-	mux.Handle(http.MethodGet, pattern_UseAllOfForRefsService_GetExample_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle(http.MethodGet, pattern_UseAllOfForRefsService_GetExample_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.UseAllOfForRefsService/GetExample", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -156,7 +156,7 @@ func RegisterUseAllOfForRefsServiceHandlerClient(ctx context.Context, mux *runti
 			return
 		}
 		forward_UseAllOfForRefsService_GetExample_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
+	}))
 	return nil
 }
 

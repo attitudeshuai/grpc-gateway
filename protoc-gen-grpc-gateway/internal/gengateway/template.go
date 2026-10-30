@@ -795,7 +795,7 @@ func Register{{ $svc.GetName }}{{ $.RegisterFuncSuffix }}Server(ctx context.Cont
 		return
 	})
 	{{- else -}}
-	mux.Handle({{ $b.HTTPMethod | toHTTPMethod}}, pattern_{{ $svc.GetName }}_{{ $m.GetName }}_{{ $b.Index }}, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle({{ $b.HTTPMethod | toHTTPMethod}}, pattern_{{ $svc.GetName }}_{{ $m.GetName }}_{{ $b.Index }}, mux.Admit("/{{ $svc.File.GetPackage }}.{{ $svc.GetName }}/{{ $m.GetName }}", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 	{{- if $UseRequestContext }}
 		ctx, cancel := context.WithCancel(req.Context())
 	{{- else -}}
@@ -826,7 +826,7 @@ func Register{{ $svc.GetName }}{{ $.RegisterFuncSuffix }}Server(ctx context.Cont
 		{{- else }}
 		forward_{{ $svc.GetName }}_{{ $m.GetName }}_{{ $b.Index }}(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 		{{- end }}
-	})
+	}))
 	{{- end }}
 	{{ end }}
 	{{- end }}
@@ -876,7 +876,7 @@ func Register{{ $svc.GetName }}{{ $.RegisterFuncSuffix }}(ctx context.Context, m
 func Register{{ $svc.GetName }}{{ $.RegisterFuncSuffix }}Client(ctx context.Context, mux *runtime.ServeMux, client {{ $svc.InstanceName }}Client) error {
 	{{- range $m := $svc.Methods }}
 	{{- range $b := $m.Bindings }}
-	mux.Handle({{ $b.HTTPMethod | toHTTPMethod }}, pattern_{{ $svc.GetName }}_{{ $m.GetName }}_{{ $b.Index }}, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle({{ $b.HTTPMethod | toHTTPMethod }}, pattern_{{ $svc.GetName }}_{{ $m.GetName }}_{{ $b.Index }}, mux.Admit("/{{ $svc.File.GetPackage }}.{{ $svc.GetName }}/{{ $m.GetName }}", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 	{{- if $UseRequestContext }}
 		ctx, cancel := context.WithCancel(req.Context())
 	{{- else -}}
@@ -915,7 +915,7 @@ func Register{{ $svc.GetName }}{{ $.RegisterFuncSuffix }}Client(ctx context.Cont
 		forward_{{ $svc.GetName }}_{{ $m.GetName }}_{{ $b.Index }}(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 		{{- end }}
 		{{- end }}
-	})
+	}))
 	{{- end }}
 	{{- end }}
 	return nil

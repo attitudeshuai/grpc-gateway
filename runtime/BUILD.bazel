@@ -5,6 +5,7 @@ package(default_visibility = ["//visibility:public"])
 go_library(
     name = "runtime",
     srcs = [
+        "admission.go",
         "context.go",
         "convert.go",
         "doc.go",
@@ -50,6 +51,7 @@ go_test(
     name = "runtime_test",
     size = "small",
     srcs = [
+        "admission_test.go",
         "context_internal_test.go",
         "context_test.go",
         "convert_test.go",

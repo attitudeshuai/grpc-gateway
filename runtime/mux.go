@@ -79,6 +79,7 @@ type ServeMux struct {
 	writeContentLength        bool
 	disableChunkedEncoding    bool
 	strictDeepWildcard        bool
+	admission                 *AdmissionController
 }
 
 // ServeMuxOption is an option that can be given to a ServeMux on construction.
@@ -329,7 +330,7 @@ func WithHealthEndpointAt(healthCheckClient grpc_health_v1.HealthClient, endpoin
 	return func(s *ServeMux) {
 		// error can be ignored since pattern is definitely valid
 		_ = s.HandlePath(
-			http.MethodGet, endpointPath, func(w http.ResponseWriter, r *http.Request, _ map[string]string,
+			http.MethodGet, endpointPath, s.Admit(grpc_health_v1.Health_Check_FullMethodName, func(w http.ResponseWriter, r *http.Request, _ map[string]string,
 			) {
 				_, outboundMarshaler := MarshalerForRequest(s, r)
 				annotatedContext, err := AnnotateContext(r.Context(), s, r, grpc_health_v1.Health_Check_FullMethodName, WithHTTPPathPattern(endpointPath))
@@ -363,7 +364,7 @@ func WithHealthEndpointAt(healthCheckClient grpc_health_v1.HealthClient, endpoin
 				}
 
 				_ = outboundMarshaler.NewEncoder(w).Encode(resp)
-			})
+			}))
 	}
 }
 

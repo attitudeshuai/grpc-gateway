@@ -76,7 +76,7 @@ func local_request_Proto3FieldSemanticsService_GetFilter_0(ctx context.Context, 
 // Note that using this registration option will cause many gRPC library features to stop working. Consider using RegisterProto3FieldSemanticsServiceHandlerFromEndpoint instead.
 // GRPC interceptors will not work for this type of registration. To use interceptors, you must use the "runtime.WithMiddlewares" option in the "runtime.NewServeMux" call.
 func RegisterProto3FieldSemanticsServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux, server Proto3FieldSemanticsServiceServer) error {
-	mux.Handle(http.MethodGet, pattern_Proto3FieldSemanticsService_GetFilter_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle(http.MethodGet, pattern_Proto3FieldSemanticsService_GetFilter_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.Proto3FieldSemanticsService/GetFilter", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -95,7 +95,7 @@ func RegisterProto3FieldSemanticsServiceHandlerServer(ctx context.Context, mux *
 			return
 		}
 		forward_Proto3FieldSemanticsService_GetFilter_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
+	}))
 
 	return nil
 }
@@ -136,7 +136,7 @@ func RegisterProto3FieldSemanticsServiceHandler(ctx context.Context, mux *runtim
 // doesn't go through the normal gRPC flow (creating a gRPC client etc.) then it will be up to the passed in
 // "Proto3FieldSemanticsServiceClient" to call the correct interceptors. This client ignores the HTTP middlewares.
 func RegisterProto3FieldSemanticsServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux, client Proto3FieldSemanticsServiceClient) error {
-	mux.Handle(http.MethodGet, pattern_Proto3FieldSemanticsService_GetFilter_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle(http.MethodGet, pattern_Proto3FieldSemanticsService_GetFilter_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.Proto3FieldSemanticsService/GetFilter", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -152,7 +152,7 @@ func RegisterProto3FieldSemanticsServiceHandlerClient(ctx context.Context, mux *
 			return
 		}
 		forward_Proto3FieldSemanticsService_GetFilter_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
+	}))
 	return nil
 }
 

@@ -111,7 +111,7 @@ func local_request_Camel_CaseService_Post_Book_0(ctx context.Context, marshaler 
 // Note that using this registration option will cause many gRPC library features to stop working. Consider using RegisterCamel_CaseServiceHandlerFromEndpoint instead.
 // GRPC interceptors will not work for this type of registration. To use interceptors, you must use the "runtime.WithMiddlewares" option in the "runtime.NewServeMux" call.
 func RegisterCamel_CaseServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux, server Camel_CaseServiceServer) error {
-	mux.Handle(http.MethodGet, pattern_Camel_CaseService_GetStatus_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle(http.MethodGet, pattern_Camel_CaseService_GetStatus_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.Camel_CaseService/GetStatus", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -130,8 +130,8 @@ func RegisterCamel_CaseServiceHandlerServer(ctx context.Context, mux *runtime.Se
 			return
 		}
 		forward_Camel_CaseService_GetStatus_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodPost, pattern_Camel_CaseService_Post_Book_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodPost, pattern_Camel_CaseService_Post_Book_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.Camel_CaseService/Post_Book", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -150,7 +150,7 @@ func RegisterCamel_CaseServiceHandlerServer(ctx context.Context, mux *runtime.Se
 			return
 		}
 		forward_Camel_CaseService_Post_Book_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
+	}))
 
 	return nil
 }
@@ -191,7 +191,7 @@ func RegisterCamel_CaseServiceHandler(ctx context.Context, mux *runtime.ServeMux
 // doesn't go through the normal gRPC flow (creating a gRPC client etc.) then it will be up to the passed in
 // "Camel_CaseServiceClient" to call the correct interceptors. This client ignores the HTTP middlewares.
 func RegisterCamel_CaseServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux, client Camel_CaseServiceClient) error {
-	mux.Handle(http.MethodGet, pattern_Camel_CaseService_GetStatus_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle(http.MethodGet, pattern_Camel_CaseService_GetStatus_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.Camel_CaseService/GetStatus", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -207,8 +207,8 @@ func RegisterCamel_CaseServiceHandlerClient(ctx context.Context, mux *runtime.Se
 			return
 		}
 		forward_Camel_CaseService_GetStatus_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodPost, pattern_Camel_CaseService_Post_Book_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodPost, pattern_Camel_CaseService_Post_Book_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.Camel_CaseService/Post_Book", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -224,7 +224,7 @@ func RegisterCamel_CaseServiceHandlerClient(ctx context.Context, mux *runtime.Se
 			return
 		}
 		forward_Camel_CaseService_Post_Book_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
+	}))
 	return nil
 }
 

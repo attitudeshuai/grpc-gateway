@@ -2398,7 +2398,7 @@ func local_request_SnakeEnumService_SnakeEnum_0(ctx context.Context, marshaler r
 // Note that using this registration option will cause many gRPC library features to stop working. Consider using RegisterABitOfEverythingServiceHandlerFromEndpoint instead.
 // GRPC interceptors will not work for this type of registration. To use interceptors, you must use the "runtime.WithMiddlewares" option in the "runtime.NewServeMux" call.
 func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux, server ABitOfEverythingServiceServer) error {
-	mux.Handle(http.MethodPost, pattern_ABitOfEverythingService_Create_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle(http.MethodPost, pattern_ABitOfEverythingService_Create_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/Create", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -2417,8 +2417,8 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_Create_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodPost, pattern_ABitOfEverythingService_CreateBody_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodPost, pattern_ABitOfEverythingService_CreateBody_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/CreateBody", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -2437,8 +2437,8 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_CreateBody_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodPut, pattern_ABitOfEverythingService_UpdateEntity_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodPut, pattern_ABitOfEverythingService_UpdateEntity_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/UpdateEntity", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -2457,8 +2457,8 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_UpdateEntity_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodPost, pattern_ABitOfEverythingService_CreateBook_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodPost, pattern_ABitOfEverythingService_CreateBook_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/CreateBook", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -2477,8 +2477,8 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_CreateBook_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodPatch, pattern_ABitOfEverythingService_UpdateBook_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodPatch, pattern_ABitOfEverythingService_UpdateBook_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/UpdateBook", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -2497,8 +2497,8 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_UpdateBook_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodGet, pattern_ABitOfEverythingService_Lookup_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodGet, pattern_ABitOfEverythingService_Lookup_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/Lookup", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -2517,8 +2517,8 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_Lookup_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodPost, pattern_ABitOfEverythingService_Custom_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodPost, pattern_ABitOfEverythingService_Custom_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/Custom", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -2537,8 +2537,8 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_Custom_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodGet, pattern_ABitOfEverythingService_Custom_1, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodGet, pattern_ABitOfEverythingService_Custom_1, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/Custom", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -2557,8 +2557,8 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_Custom_1(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodPost, pattern_ABitOfEverythingService_DoubleColon_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodPost, pattern_ABitOfEverythingService_DoubleColon_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/DoubleColon", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -2577,8 +2577,8 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_DoubleColon_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodPut, pattern_ABitOfEverythingService_Update_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodPut, pattern_ABitOfEverythingService_Update_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/Update", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -2597,8 +2597,8 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_Update_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodPut, pattern_ABitOfEverythingService_UpdateV2_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodPut, pattern_ABitOfEverythingService_UpdateV2_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/UpdateV2", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -2617,8 +2617,8 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_UpdateV2_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodPatch, pattern_ABitOfEverythingService_UpdateV2_1, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodPatch, pattern_ABitOfEverythingService_UpdateV2_1, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/UpdateV2", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -2637,8 +2637,8 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_UpdateV2_1(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodPatch, pattern_ABitOfEverythingService_UpdateV2_2, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodPatch, pattern_ABitOfEverythingService_UpdateV2_2, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/UpdateV2", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -2657,8 +2657,8 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_UpdateV2_2(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodPost, pattern_ABitOfEverythingService_CreateNestedBodyOneof_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodPost, pattern_ABitOfEverythingService_CreateNestedBodyOneof_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/CreateNestedBodyOneof", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -2677,8 +2677,8 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_CreateNestedBodyOneof_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodDelete, pattern_ABitOfEverythingService_Delete_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodDelete, pattern_ABitOfEverythingService_Delete_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/Delete", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -2697,8 +2697,8 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_Delete_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodGet, pattern_ABitOfEverythingService_GetQuery_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodGet, pattern_ABitOfEverythingService_GetQuery_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/GetQuery", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -2717,8 +2717,8 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_GetQuery_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodGet, pattern_ABitOfEverythingService_GetRepeatedQuery_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodGet, pattern_ABitOfEverythingService_GetRepeatedQuery_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/GetRepeatedQuery", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -2737,8 +2737,8 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_GetRepeatedQuery_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodGet, pattern_ABitOfEverythingService_Echo_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodGet, pattern_ABitOfEverythingService_Echo_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/Echo", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -2757,8 +2757,8 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_Echo_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodPost, pattern_ABitOfEverythingService_Echo_1, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodPost, pattern_ABitOfEverythingService_Echo_1, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/Echo", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -2777,8 +2777,8 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_Echo_1(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodGet, pattern_ABitOfEverythingService_Echo_2, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodGet, pattern_ABitOfEverythingService_Echo_2, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/Echo", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -2797,8 +2797,8 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_Echo_2(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodPost, pattern_ABitOfEverythingService_DeepPathEcho_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodPost, pattern_ABitOfEverythingService_DeepPathEcho_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/DeepPathEcho", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -2817,8 +2817,8 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_DeepPathEcho_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodGet, pattern_ABitOfEverythingService_Timeout_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodGet, pattern_ABitOfEverythingService_Timeout_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/Timeout", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -2837,8 +2837,8 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_Timeout_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodGet, pattern_ABitOfEverythingService_ErrorWithDetails_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodGet, pattern_ABitOfEverythingService_ErrorWithDetails_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/ErrorWithDetails", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -2857,8 +2857,8 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_ErrorWithDetails_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodPost, pattern_ABitOfEverythingService_GetMessageWithBody_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodPost, pattern_ABitOfEverythingService_GetMessageWithBody_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/GetMessageWithBody", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -2877,8 +2877,8 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_GetMessageWithBody_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodPost, pattern_ABitOfEverythingService_PostWithEmptyBody_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodPost, pattern_ABitOfEverythingService_PostWithEmptyBody_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/PostWithEmptyBody", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -2897,8 +2897,8 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_PostWithEmptyBody_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodGet, pattern_ABitOfEverythingService_CheckGetQueryParams_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodGet, pattern_ABitOfEverythingService_CheckGetQueryParams_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/CheckGetQueryParams", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -2917,8 +2917,8 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_CheckGetQueryParams_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodGet, pattern_ABitOfEverythingService_CheckNestedEnumGetQueryParams_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodGet, pattern_ABitOfEverythingService_CheckNestedEnumGetQueryParams_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/CheckNestedEnumGetQueryParams", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -2937,8 +2937,8 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_CheckNestedEnumGetQueryParams_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodPost, pattern_ABitOfEverythingService_CheckPostQueryParams_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodPost, pattern_ABitOfEverythingService_CheckPostQueryParams_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/CheckPostQueryParams", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -2957,8 +2957,8 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_CheckPostQueryParams_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodPost, pattern_ABitOfEverythingService_OverwriteRequestContentType_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodPost, pattern_ABitOfEverythingService_OverwriteRequestContentType_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/OverwriteRequestContentType", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -2977,8 +2977,8 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_OverwriteRequestContentType_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodGet, pattern_ABitOfEverythingService_OverwriteResponseContentType_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodGet, pattern_ABitOfEverythingService_OverwriteResponseContentType_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/OverwriteResponseContentType", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -2997,8 +2997,8 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_OverwriteResponseContentType_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodGet, pattern_ABitOfEverythingService_CheckExternalPathEnum_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodGet, pattern_ABitOfEverythingService_CheckExternalPathEnum_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/CheckExternalPathEnum", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -3017,8 +3017,8 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_CheckExternalPathEnum_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodGet, pattern_ABitOfEverythingService_CheckExternalNestedPathEnum_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodGet, pattern_ABitOfEverythingService_CheckExternalNestedPathEnum_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/CheckExternalNestedPathEnum", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -3037,8 +3037,8 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_CheckExternalNestedPathEnum_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodGet, pattern_ABitOfEverythingService_CheckStatus_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodGet, pattern_ABitOfEverythingService_CheckStatus_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/CheckStatus", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -3057,8 +3057,8 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_CheckStatus_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodHead, pattern_ABitOfEverythingService_Exists_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodHead, pattern_ABitOfEverythingService_Exists_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/Exists", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -3077,8 +3077,8 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_Exists_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodOptions, pattern_ABitOfEverythingService_CustomOptionsRequest_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodOptions, pattern_ABitOfEverythingService_CustomOptionsRequest_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/CustomOptionsRequest", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -3097,8 +3097,8 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_CustomOptionsRequest_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodTrace, pattern_ABitOfEverythingService_TraceRequest_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodTrace, pattern_ABitOfEverythingService_TraceRequest_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/TraceRequest", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -3117,8 +3117,8 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_TraceRequest_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodPost, pattern_ABitOfEverythingService_PostOneofEnum_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodPost, pattern_ABitOfEverythingService_PostOneofEnum_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/PostOneofEnum", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -3137,8 +3137,8 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_PostOneofEnum_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodPost, pattern_ABitOfEverythingService_PostRequiredMessageType_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodPost, pattern_ABitOfEverythingService_PostRequiredMessageType_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/PostRequiredMessageType", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -3157,7 +3157,7 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_PostRequiredMessageType_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
+	}))
 
 	return nil
 }
@@ -3168,7 +3168,7 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 // Note that using this registration option will cause many gRPC library features to stop working. Consider using RegisterCamelCaseServiceNameHandlerFromEndpoint instead.
 // GRPC interceptors will not work for this type of registration. To use interceptors, you must use the "runtime.WithMiddlewares" option in the "runtime.NewServeMux" call.
 func RegisterCamelCaseServiceNameHandlerServer(ctx context.Context, mux *runtime.ServeMux, server CamelCaseServiceNameServer) error {
-	mux.Handle(http.MethodGet, pattern_CamelCaseServiceName_Empty_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle(http.MethodGet, pattern_CamelCaseServiceName_Empty_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.CamelCaseServiceName/Empty", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -3187,7 +3187,7 @@ func RegisterCamelCaseServiceNameHandlerServer(ctx context.Context, mux *runtime
 			return
 		}
 		forward_CamelCaseServiceName_Empty_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
+	}))
 
 	return nil
 }
@@ -3198,7 +3198,7 @@ func RegisterCamelCaseServiceNameHandlerServer(ctx context.Context, mux *runtime
 // Note that using this registration option will cause many gRPC library features to stop working. Consider using RegisterSnakeEnumServiceHandlerFromEndpoint instead.
 // GRPC interceptors will not work for this type of registration. To use interceptors, you must use the "runtime.WithMiddlewares" option in the "runtime.NewServeMux" call.
 func RegisterSnakeEnumServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux, server SnakeEnumServiceServer) error {
-	mux.Handle(http.MethodGet, pattern_SnakeEnumService_SnakeEnum_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle(http.MethodGet, pattern_SnakeEnumService_SnakeEnum_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.SnakeEnumService/SnakeEnum", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -3217,7 +3217,7 @@ func RegisterSnakeEnumServiceHandlerServer(ctx context.Context, mux *runtime.Ser
 			return
 		}
 		forward_SnakeEnumService_SnakeEnum_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
+	}))
 
 	return nil
 }
@@ -3258,7 +3258,7 @@ func RegisterABitOfEverythingServiceHandler(ctx context.Context, mux *runtime.Se
 // doesn't go through the normal gRPC flow (creating a gRPC client etc.) then it will be up to the passed in
 // "ABitOfEverythingServiceClient" to call the correct interceptors. This client ignores the HTTP middlewares.
 func RegisterABitOfEverythingServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux, client ABitOfEverythingServiceClient) error {
-	mux.Handle(http.MethodPost, pattern_ABitOfEverythingService_Create_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle(http.MethodPost, pattern_ABitOfEverythingService_Create_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/Create", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -3274,8 +3274,8 @@ func RegisterABitOfEverythingServiceHandlerClient(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_Create_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodPost, pattern_ABitOfEverythingService_CreateBody_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodPost, pattern_ABitOfEverythingService_CreateBody_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/CreateBody", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -3291,8 +3291,8 @@ func RegisterABitOfEverythingServiceHandlerClient(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_CreateBody_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodPut, pattern_ABitOfEverythingService_UpdateEntity_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodPut, pattern_ABitOfEverythingService_UpdateEntity_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/UpdateEntity", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -3308,8 +3308,8 @@ func RegisterABitOfEverythingServiceHandlerClient(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_UpdateEntity_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodPost, pattern_ABitOfEverythingService_CreateBook_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodPost, pattern_ABitOfEverythingService_CreateBook_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/CreateBook", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -3325,8 +3325,8 @@ func RegisterABitOfEverythingServiceHandlerClient(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_CreateBook_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodPatch, pattern_ABitOfEverythingService_UpdateBook_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodPatch, pattern_ABitOfEverythingService_UpdateBook_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/UpdateBook", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -3342,8 +3342,8 @@ func RegisterABitOfEverythingServiceHandlerClient(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_UpdateBook_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodGet, pattern_ABitOfEverythingService_Lookup_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodGet, pattern_ABitOfEverythingService_Lookup_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/Lookup", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -3359,8 +3359,8 @@ func RegisterABitOfEverythingServiceHandlerClient(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_Lookup_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodPost, pattern_ABitOfEverythingService_Custom_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodPost, pattern_ABitOfEverythingService_Custom_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/Custom", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -3376,8 +3376,8 @@ func RegisterABitOfEverythingServiceHandlerClient(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_Custom_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodGet, pattern_ABitOfEverythingService_Custom_1, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodGet, pattern_ABitOfEverythingService_Custom_1, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/Custom", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -3393,8 +3393,8 @@ func RegisterABitOfEverythingServiceHandlerClient(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_Custom_1(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodPost, pattern_ABitOfEverythingService_DoubleColon_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodPost, pattern_ABitOfEverythingService_DoubleColon_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/DoubleColon", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -3410,8 +3410,8 @@ func RegisterABitOfEverythingServiceHandlerClient(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_DoubleColon_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodPut, pattern_ABitOfEverythingService_Update_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodPut, pattern_ABitOfEverythingService_Update_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/Update", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -3427,8 +3427,8 @@ func RegisterABitOfEverythingServiceHandlerClient(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_Update_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodPut, pattern_ABitOfEverythingService_UpdateV2_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodPut, pattern_ABitOfEverythingService_UpdateV2_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/UpdateV2", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -3444,8 +3444,8 @@ func RegisterABitOfEverythingServiceHandlerClient(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_UpdateV2_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodPatch, pattern_ABitOfEverythingService_UpdateV2_1, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodPatch, pattern_ABitOfEverythingService_UpdateV2_1, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/UpdateV2", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -3461,8 +3461,8 @@ func RegisterABitOfEverythingServiceHandlerClient(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_UpdateV2_1(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodPatch, pattern_ABitOfEverythingService_UpdateV2_2, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodPatch, pattern_ABitOfEverythingService_UpdateV2_2, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/UpdateV2", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -3478,8 +3478,8 @@ func RegisterABitOfEverythingServiceHandlerClient(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_UpdateV2_2(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodPost, pattern_ABitOfEverythingService_CreateNestedBodyOneof_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodPost, pattern_ABitOfEverythingService_CreateNestedBodyOneof_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/CreateNestedBodyOneof", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -3495,8 +3495,8 @@ func RegisterABitOfEverythingServiceHandlerClient(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_CreateNestedBodyOneof_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodDelete, pattern_ABitOfEverythingService_Delete_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodDelete, pattern_ABitOfEverythingService_Delete_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/Delete", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -3512,8 +3512,8 @@ func RegisterABitOfEverythingServiceHandlerClient(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_Delete_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodGet, pattern_ABitOfEverythingService_GetQuery_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodGet, pattern_ABitOfEverythingService_GetQuery_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/GetQuery", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -3529,8 +3529,8 @@ func RegisterABitOfEverythingServiceHandlerClient(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_GetQuery_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodGet, pattern_ABitOfEverythingService_GetRepeatedQuery_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodGet, pattern_ABitOfEverythingService_GetRepeatedQuery_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/GetRepeatedQuery", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -3546,8 +3546,8 @@ func RegisterABitOfEverythingServiceHandlerClient(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_GetRepeatedQuery_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodGet, pattern_ABitOfEverythingService_Echo_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodGet, pattern_ABitOfEverythingService_Echo_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/Echo", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -3563,8 +3563,8 @@ func RegisterABitOfEverythingServiceHandlerClient(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_Echo_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodPost, pattern_ABitOfEverythingService_Echo_1, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodPost, pattern_ABitOfEverythingService_Echo_1, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/Echo", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -3580,8 +3580,8 @@ func RegisterABitOfEverythingServiceHandlerClient(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_Echo_1(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodGet, pattern_ABitOfEverythingService_Echo_2, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodGet, pattern_ABitOfEverythingService_Echo_2, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/Echo", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -3597,8 +3597,8 @@ func RegisterABitOfEverythingServiceHandlerClient(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_Echo_2(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodPost, pattern_ABitOfEverythingService_DeepPathEcho_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodPost, pattern_ABitOfEverythingService_DeepPathEcho_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/DeepPathEcho", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -3614,8 +3614,8 @@ func RegisterABitOfEverythingServiceHandlerClient(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_DeepPathEcho_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodGet, pattern_ABitOfEverythingService_Timeout_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodGet, pattern_ABitOfEverythingService_Timeout_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/Timeout", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -3631,8 +3631,8 @@ func RegisterABitOfEverythingServiceHandlerClient(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_Timeout_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodGet, pattern_ABitOfEverythingService_ErrorWithDetails_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodGet, pattern_ABitOfEverythingService_ErrorWithDetails_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/ErrorWithDetails", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -3648,8 +3648,8 @@ func RegisterABitOfEverythingServiceHandlerClient(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_ErrorWithDetails_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodPost, pattern_ABitOfEverythingService_GetMessageWithBody_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodPost, pattern_ABitOfEverythingService_GetMessageWithBody_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/GetMessageWithBody", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -3665,8 +3665,8 @@ func RegisterABitOfEverythingServiceHandlerClient(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_GetMessageWithBody_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodPost, pattern_ABitOfEverythingService_PostWithEmptyBody_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodPost, pattern_ABitOfEverythingService_PostWithEmptyBody_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/PostWithEmptyBody", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -3682,8 +3682,8 @@ func RegisterABitOfEverythingServiceHandlerClient(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_PostWithEmptyBody_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodGet, pattern_ABitOfEverythingService_CheckGetQueryParams_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodGet, pattern_ABitOfEverythingService_CheckGetQueryParams_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/CheckGetQueryParams", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -3699,8 +3699,8 @@ func RegisterABitOfEverythingServiceHandlerClient(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_CheckGetQueryParams_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodGet, pattern_ABitOfEverythingService_CheckNestedEnumGetQueryParams_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodGet, pattern_ABitOfEverythingService_CheckNestedEnumGetQueryParams_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/CheckNestedEnumGetQueryParams", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -3716,8 +3716,8 @@ func RegisterABitOfEverythingServiceHandlerClient(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_CheckNestedEnumGetQueryParams_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodPost, pattern_ABitOfEverythingService_CheckPostQueryParams_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodPost, pattern_ABitOfEverythingService_CheckPostQueryParams_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/CheckPostQueryParams", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -3733,8 +3733,8 @@ func RegisterABitOfEverythingServiceHandlerClient(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_CheckPostQueryParams_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodPost, pattern_ABitOfEverythingService_OverwriteRequestContentType_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodPost, pattern_ABitOfEverythingService_OverwriteRequestContentType_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/OverwriteRequestContentType", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -3750,8 +3750,8 @@ func RegisterABitOfEverythingServiceHandlerClient(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_OverwriteRequestContentType_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodGet, pattern_ABitOfEverythingService_OverwriteResponseContentType_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodGet, pattern_ABitOfEverythingService_OverwriteResponseContentType_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/OverwriteResponseContentType", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -3767,8 +3767,8 @@ func RegisterABitOfEverythingServiceHandlerClient(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_OverwriteResponseContentType_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodGet, pattern_ABitOfEverythingService_CheckExternalPathEnum_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodGet, pattern_ABitOfEverythingService_CheckExternalPathEnum_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/CheckExternalPathEnum", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -3784,8 +3784,8 @@ func RegisterABitOfEverythingServiceHandlerClient(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_CheckExternalPathEnum_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodGet, pattern_ABitOfEverythingService_CheckExternalNestedPathEnum_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodGet, pattern_ABitOfEverythingService_CheckExternalNestedPathEnum_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/CheckExternalNestedPathEnum", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -3801,8 +3801,8 @@ func RegisterABitOfEverythingServiceHandlerClient(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_CheckExternalNestedPathEnum_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodGet, pattern_ABitOfEverythingService_CheckStatus_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodGet, pattern_ABitOfEverythingService_CheckStatus_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/CheckStatus", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -3818,8 +3818,8 @@ func RegisterABitOfEverythingServiceHandlerClient(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_CheckStatus_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodHead, pattern_ABitOfEverythingService_Exists_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodHead, pattern_ABitOfEverythingService_Exists_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/Exists", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -3835,8 +3835,8 @@ func RegisterABitOfEverythingServiceHandlerClient(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_Exists_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodOptions, pattern_ABitOfEverythingService_CustomOptionsRequest_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodOptions, pattern_ABitOfEverythingService_CustomOptionsRequest_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/CustomOptionsRequest", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -3852,8 +3852,8 @@ func RegisterABitOfEverythingServiceHandlerClient(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_CustomOptionsRequest_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodTrace, pattern_ABitOfEverythingService_TraceRequest_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodTrace, pattern_ABitOfEverythingService_TraceRequest_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/TraceRequest", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -3869,8 +3869,8 @@ func RegisterABitOfEverythingServiceHandlerClient(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_TraceRequest_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodPost, pattern_ABitOfEverythingService_PostOneofEnum_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodPost, pattern_ABitOfEverythingService_PostOneofEnum_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/PostOneofEnum", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -3886,8 +3886,8 @@ func RegisterABitOfEverythingServiceHandlerClient(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_PostOneofEnum_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodPost, pattern_ABitOfEverythingService_PostRequiredMessageType_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	}))
+	mux.Handle(http.MethodPost, pattern_ABitOfEverythingService_PostRequiredMessageType_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.ABitOfEverythingService/PostRequiredMessageType", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -3903,7 +3903,7 @@ func RegisterABitOfEverythingServiceHandlerClient(ctx context.Context, mux *runt
 			return
 		}
 		forward_ABitOfEverythingService_PostRequiredMessageType_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
+	}))
 	return nil
 }
 
@@ -4025,7 +4025,7 @@ func RegisterCamelCaseServiceNameHandler(ctx context.Context, mux *runtime.Serve
 // doesn't go through the normal gRPC flow (creating a gRPC client etc.) then it will be up to the passed in
 // "CamelCaseServiceNameClient" to call the correct interceptors. This client ignores the HTTP middlewares.
 func RegisterCamelCaseServiceNameHandlerClient(ctx context.Context, mux *runtime.ServeMux, client CamelCaseServiceNameClient) error {
-	mux.Handle(http.MethodGet, pattern_CamelCaseServiceName_Empty_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle(http.MethodGet, pattern_CamelCaseServiceName_Empty_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.CamelCaseServiceName/Empty", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -4041,7 +4041,7 @@ func RegisterCamelCaseServiceNameHandlerClient(ctx context.Context, mux *runtime
 			return
 		}
 		forward_CamelCaseServiceName_Empty_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
+	}))
 	return nil
 }
 
@@ -4089,7 +4089,7 @@ func RegisterSnakeEnumServiceHandler(ctx context.Context, mux *runtime.ServeMux,
 // doesn't go through the normal gRPC flow (creating a gRPC client etc.) then it will be up to the passed in
 // "SnakeEnumServiceClient" to call the correct interceptors. This client ignores the HTTP middlewares.
 func RegisterSnakeEnumServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux, client SnakeEnumServiceClient) error {
-	mux.Handle(http.MethodGet, pattern_SnakeEnumService_SnakeEnum_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle(http.MethodGet, pattern_SnakeEnumService_SnakeEnum_0, mux.Admit("/grpc.gateway.examples.internal.proto.examplepb.SnakeEnumService/SnakeEnum", func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -4105,7 +4105,7 @@ func RegisterSnakeEnumServiceHandlerClient(ctx context.Context, mux *runtime.Ser
 			return
 		}
 		forward_SnakeEnumService_SnakeEnum_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
+	}))
 	return nil
 }
 
