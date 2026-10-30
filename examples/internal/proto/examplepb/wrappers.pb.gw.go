@@ -18,7 +18,6 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/v2/utilities"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/grpclog"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/proto"
@@ -339,7 +338,12 @@ func local_request_WrappersService_CreateEmpty_0(ctx context.Context, marshaler 
 // StreamingRPC :currently unsupported pending https://github.com/grpc/grpc-go/issues/906.
 // Note that using this registration option will cause many gRPC library features to stop working. Consider using RegisterWrappersServiceHandlerFromEndpoint instead.
 // GRPC interceptors will not work for this type of registration. To use interceptors, you must use the "runtime.WithMiddlewares" option in the "runtime.NewServeMux" call.
-func RegisterWrappersServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux, server WrappersServiceServer) error {
+func RegisterWrappersServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux, server WrappersServiceServer) (err error) {
+	ctx, finishRegistration, err := mux.BeginRegistration(ctx)
+	if err != nil {
+		return err
+	}
+	defer finishRegistration(&err)
 	mux.Handle(http.MethodPost, pattern_WrappersService_Create_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -360,6 +364,7 @@ func RegisterWrappersServiceHandlerServer(ctx context.Context, mux *runtime.Serv
 		}
 		forward_WrappersService_Create_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodPost, pattern_WrappersService_CreateStringValue_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -380,6 +385,7 @@ func RegisterWrappersServiceHandlerServer(ctx context.Context, mux *runtime.Serv
 		}
 		forward_WrappersService_CreateStringValue_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodPost, pattern_WrappersService_CreateInt32Value_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -400,6 +406,7 @@ func RegisterWrappersServiceHandlerServer(ctx context.Context, mux *runtime.Serv
 		}
 		forward_WrappersService_CreateInt32Value_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodPost, pattern_WrappersService_CreateInt64Value_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -420,6 +427,7 @@ func RegisterWrappersServiceHandlerServer(ctx context.Context, mux *runtime.Serv
 		}
 		forward_WrappersService_CreateInt64Value_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodPost, pattern_WrappersService_CreateFloatValue_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -440,6 +448,7 @@ func RegisterWrappersServiceHandlerServer(ctx context.Context, mux *runtime.Serv
 		}
 		forward_WrappersService_CreateFloatValue_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodPost, pattern_WrappersService_CreateDoubleValue_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -460,6 +469,7 @@ func RegisterWrappersServiceHandlerServer(ctx context.Context, mux *runtime.Serv
 		}
 		forward_WrappersService_CreateDoubleValue_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodPost, pattern_WrappersService_CreateBoolValue_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -480,6 +490,7 @@ func RegisterWrappersServiceHandlerServer(ctx context.Context, mux *runtime.Serv
 		}
 		forward_WrappersService_CreateBoolValue_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodPost, pattern_WrappersService_CreateUInt32Value_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -500,6 +511,7 @@ func RegisterWrappersServiceHandlerServer(ctx context.Context, mux *runtime.Serv
 		}
 		forward_WrappersService_CreateUInt32Value_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodPost, pattern_WrappersService_CreateUInt64Value_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -520,6 +532,7 @@ func RegisterWrappersServiceHandlerServer(ctx context.Context, mux *runtime.Serv
 		}
 		forward_WrappersService_CreateUInt64Value_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodPost, pattern_WrappersService_CreateBytesValue_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -540,6 +553,7 @@ func RegisterWrappersServiceHandlerServer(ctx context.Context, mux *runtime.Serv
 		}
 		forward_WrappersService_CreateBytesValue_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodPost, pattern_WrappersService_CreateEmpty_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -566,26 +580,12 @@ func RegisterWrappersServiceHandlerServer(ctx context.Context, mux *runtime.Serv
 
 // RegisterWrappersServiceHandlerFromEndpoint is same as RegisterWrappersServiceHandler but
 // automatically dials to "endpoint" and closes the connection when "ctx" gets done.
-func RegisterWrappersServiceHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) (err error) {
-	conn, err := grpc.NewClient(endpoint, opts...)
-	if err != nil {
-		return err
-	}
-	defer func() {
-		if err != nil {
-			if cerr := conn.Close(); cerr != nil {
-				grpclog.Errorf("Failed to close conn to %s: %v", endpoint, cerr)
-			}
-			return
-		}
-		go func() {
-			<-ctx.Done()
-			if cerr := conn.Close(); cerr != nil {
-				grpclog.Errorf("Failed to close conn to %s: %v", endpoint, cerr)
-			}
-		}()
-	}()
-	return RegisterWrappersServiceHandler(ctx, mux, conn)
+// When the mux was configured with runtime.WithUpstreamConns, the connection is owned by
+// the gateway, shared per endpoint and dial options, and released on "ctx" cancellation.
+func RegisterWrappersServiceHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) error {
+	return mux.RegisterFromEndpoint(ctx, endpoint, opts, func(ctx context.Context, conn *grpc.ClientConn) error {
+		return RegisterWrappersServiceHandler(ctx, mux, conn)
+	})
 }
 
 // RegisterWrappersServiceHandler registers the http handlers for service WrappersService to "mux".
@@ -599,7 +599,12 @@ func RegisterWrappersServiceHandler(ctx context.Context, mux *runtime.ServeMux, 
 // Note: the gRPC framework executes interceptors within the gRPC handler. If the passed in "WrappersServiceClient"
 // doesn't go through the normal gRPC flow (creating a gRPC client etc.) then it will be up to the passed in
 // "WrappersServiceClient" to call the correct interceptors. This client ignores the HTTP middlewares.
-func RegisterWrappersServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux, client WrappersServiceClient) error {
+func RegisterWrappersServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux, client WrappersServiceClient) (err error) {
+	ctx, finishRegistration, err := mux.BeginRegistration(ctx)
+	if err != nil {
+		return err
+	}
+	defer finishRegistration(&err)
 	mux.Handle(http.MethodPost, pattern_WrappersService_Create_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()

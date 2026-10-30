@@ -9,6 +9,7 @@ import (
 	"net/textproto"
 	"regexp"
 	"strings"
+	"sync"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/internal/httprule"
 	"google.golang.org/grpc"
@@ -60,8 +61,19 @@ type Middleware func(HandlerFunc) HandlerFunc
 // ServeMux is a request multiplexer for grpc-gateway.
 // It matches http requests to patterns and invokes the corresponding handler.
 type ServeMux struct {
+	// mu guards handlers against registrations, registration rollbacks and
+	// request dispatch running concurrently.
+	mu sync.RWMutex
+	// regMu serializes whole registration transactions so a rollback only
+	// removes routes of its own transaction. It is never held while requests
+	// are dispatched, so registration and connection release stay concurrent.
+	regMu sync.Mutex
 	// handlers maps HTTP method to a list of handlers.
-	handlers                  map[string][]handler
+	handlers map[string][]handler
+	// upstream optionally owns shared, reference-counted gRPC client
+	// connections used by RegisterFromEndpoint; when nil every registration
+	// dials its own private connection as before.
+	upstream                  *UpstreamConns
 	middlewares               []Middleware
 	forwardResponseOptions    []func(context.Context, http.ResponseWriter, proto.Message) error
 	forwardResponseRewriter   ForwardResponseRewriter
@@ -128,6 +140,21 @@ func WithUnescapingMode(mode UnescapingMode) ServeMuxOption {
 func WithMiddlewares(middlewares ...Middleware) ServeMuxOption {
 	return func(serveMux *ServeMux) {
 		serveMux.middlewares = append(serveMux.middlewares, middlewares...)
+	}
+}
+
+// WithUpstreamConns makes the mux use conns, a gateway-owned manager of gRPC
+// client connections. FromEndpoint registrations to the same endpoint with the
+// same dial options then share a single reference-counted connection instead
+// of each dialing their own. The manager is also what makes registration
+// rollback, graceful drain and explicit shutdown available.
+//
+// Without this option the historical behavior is preserved: every
+// FromEndpoint registration dials a private connection with exactly the
+// provided dial options and closes it when its context gets done.
+func WithUpstreamConns(conns *UpstreamConns) ServeMuxOption {
+	return func(serveMux *ServeMux) {
+		serveMux.upstream = conns
 	}
 }
 
@@ -422,6 +449,8 @@ func (s *ServeMux) Handle(meth string, pat Pattern, h HandlerFunc) {
 	if len(s.middlewares) > 0 {
 		h = chainMiddlewares(s.middlewares)(h)
 	}
+	s.mu.Lock()
+	defer s.mu.Unlock()
 	s.handlers[meth] = append([]handler{{pat: pat, h: h, raw: raw}}, s.handlers[meth]...)
 }
 
@@ -444,6 +473,14 @@ func (s *ServeMux) HandlePath(meth string, pathPattern string, h HandlerFunc) er
 // ServeHTTP dispatches the request to the first handler whose pattern matches to r.Method and r.URL.Path.
 func (s *ServeMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
+
+	// Account the request for graceful shutdown draining of gateway-owned
+	// upstream connections. Requests arriving after shutdown started are not
+	// admitted: their RPCs are ended deterministically when connections close.
+	if u := s.upstream; u != nil {
+		admitted := u.beginRequest()
+		defer u.endRequest(admitted)
+	}
 
 	path := r.URL.Path
 	if !strings.HasPrefix(path, "/") {
@@ -489,7 +526,16 @@ func (s *ServeMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	lastPathComponent := pathComponents[len(pathComponents)-1]
 
-	for _, h := range s.handlers[r.Method] {
+	// Snapshot the routing table under RLock so registrations and rollbacks
+	// can mutate it concurrently while dispatch reads a stable slice.
+	s.mu.RLock()
+	registered := make(map[string][]handler, len(s.handlers))
+	for method, hs := range s.handlers {
+		registered[method] = hs
+	}
+	s.mu.RUnlock()
+
+	for _, h := range registered[r.Method] {
 		// If the pattern has a verb, explicitly look for a suffix in the last
 		// component that matches a colon plus the verb. This allows us to
 		// handle some cases that otherwise can't be correctly handled by the
@@ -550,11 +596,11 @@ func (s *ServeMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// GET is tried first when the request is subject to path length fallback:
 	// map iteration order is random, and a match for another method would
 	// otherwise return 405 before the GET handler is reached.
-	methods := make([]string, 0, len(s.handlers))
+	methods := make([]string, 0, len(registered))
 	if s.isPathLengthFallback(r) {
 		methods = append(methods, http.MethodGet)
 	}
-	for m := range s.handlers {
+	for m := range registered {
 		if m == http.MethodGet && s.isPathLengthFallback(r) {
 			continue
 		}
@@ -564,7 +610,7 @@ func (s *ServeMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		if m == r.Method {
 			continue
 		}
-		for _, h := range s.handlers[m] {
+		for _, h := range registered[m] {
 			var verb string
 			patVerb := h.pat.Verb()
 

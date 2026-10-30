@@ -39,7 +39,6 @@ func New(reg *descriptor.Registry, useRequestContext bool, registerFuncSuffix st
 		"google.golang.org/protobuf/proto",
 		"google.golang.org/grpc",
 		"google.golang.org/grpc/codes",
-		"google.golang.org/grpc/grpclog",
 		"google.golang.org/grpc/metadata",
 		"google.golang.org/grpc/status",
 	} {
@@ -114,6 +113,20 @@ func (g *generator) generate(file *descriptor.File) (string, error) {
 
 	if g.standalone {
 		imports = append(imports, file.GoPkg)
+	}
+
+	// grpclog is only referenced by the generated client-streaming request
+	// functions, so import it only when one is emitted.
+	for _, svc := range file.Services {
+		for _, m := range svc.Methods {
+			if len(m.Bindings) > 0 && m.GetClientStreaming() {
+				imports = append(imports, descriptor.GoPackage{
+					Path: "google.golang.org/grpc/grpclog",
+					Name: "grpclog",
+				})
+				break
+			}
+		}
 	}
 
 	for _, svc := range file.Services {

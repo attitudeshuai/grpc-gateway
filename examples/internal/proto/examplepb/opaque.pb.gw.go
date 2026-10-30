@@ -469,7 +469,12 @@ func local_request_OpaqueEcommerceService_OpaqueEchoNote_0(ctx context.Context, 
 // StreamingRPC :currently unsupported pending https://github.com/grpc/grpc-go/issues/906.
 // Note that using this registration option will cause many gRPC library features to stop working. Consider using RegisterOpaqueEcommerceServiceHandlerFromEndpoint instead.
 // GRPC interceptors will not work for this type of registration. To use interceptors, you must use the "runtime.WithMiddlewares" option in the "runtime.NewServeMux" call.
-func RegisterOpaqueEcommerceServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux, server OpaqueEcommerceServiceServer) error {
+func RegisterOpaqueEcommerceServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux, server OpaqueEcommerceServiceServer) (err error) {
+	ctx, finishRegistration, err := mux.BeginRegistration(ctx)
+	if err != nil {
+		return err
+	}
+	defer finishRegistration(&err)
 	mux.Handle(http.MethodGet, pattern_OpaqueEcommerceService_OpaqueGetProduct_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -497,6 +502,7 @@ func RegisterOpaqueEcommerceServiceHandlerServer(ctx context.Context, mux *runti
 		runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 		return
 	})
+
 	mux.Handle(http.MethodPost, pattern_OpaqueEcommerceService_OpaqueCreateProduct_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -517,6 +523,7 @@ func RegisterOpaqueEcommerceServiceHandlerServer(ctx context.Context, mux *runti
 		}
 		forward_OpaqueEcommerceService_OpaqueCreateProduct_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodPost, pattern_OpaqueEcommerceService_OpaqueCreateProductField_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -551,6 +558,7 @@ func RegisterOpaqueEcommerceServiceHandlerServer(ctx context.Context, mux *runti
 		runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 		return
 	})
+
 	mux.Handle(http.MethodPatch, pattern_OpaqueEcommerceService_OpaqueUpdateProduct_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -571,6 +579,7 @@ func RegisterOpaqueEcommerceServiceHandlerServer(ctx context.Context, mux *runti
 		}
 		forward_OpaqueEcommerceService_OpaqueUpdateProduct_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodGet, pattern_OpaqueEcommerceService_OpaqueSearchOrders_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -591,6 +600,7 @@ func RegisterOpaqueEcommerceServiceHandlerServer(ctx context.Context, mux *runti
 		}
 		forward_OpaqueEcommerceService_OpaqueSearchOrders_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodPost, pattern_OpaqueEcommerceService_OpaqueEchoNote_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -617,26 +627,12 @@ func RegisterOpaqueEcommerceServiceHandlerServer(ctx context.Context, mux *runti
 
 // RegisterOpaqueEcommerceServiceHandlerFromEndpoint is same as RegisterOpaqueEcommerceServiceHandler but
 // automatically dials to "endpoint" and closes the connection when "ctx" gets done.
-func RegisterOpaqueEcommerceServiceHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) (err error) {
-	conn, err := grpc.NewClient(endpoint, opts...)
-	if err != nil {
-		return err
-	}
-	defer func() {
-		if err != nil {
-			if cerr := conn.Close(); cerr != nil {
-				grpclog.Errorf("Failed to close conn to %s: %v", endpoint, cerr)
-			}
-			return
-		}
-		go func() {
-			<-ctx.Done()
-			if cerr := conn.Close(); cerr != nil {
-				grpclog.Errorf("Failed to close conn to %s: %v", endpoint, cerr)
-			}
-		}()
-	}()
-	return RegisterOpaqueEcommerceServiceHandler(ctx, mux, conn)
+// When the mux was configured with runtime.WithUpstreamConns, the connection is owned by
+// the gateway, shared per endpoint and dial options, and released on "ctx" cancellation.
+func RegisterOpaqueEcommerceServiceHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) error {
+	return mux.RegisterFromEndpoint(ctx, endpoint, opts, func(ctx context.Context, conn *grpc.ClientConn) error {
+		return RegisterOpaqueEcommerceServiceHandler(ctx, mux, conn)
+	})
 }
 
 // RegisterOpaqueEcommerceServiceHandler registers the http handlers for service OpaqueEcommerceService to "mux".
@@ -650,7 +646,12 @@ func RegisterOpaqueEcommerceServiceHandler(ctx context.Context, mux *runtime.Ser
 // Note: the gRPC framework executes interceptors within the gRPC handler. If the passed in "OpaqueEcommerceServiceClient"
 // doesn't go through the normal gRPC flow (creating a gRPC client etc.) then it will be up to the passed in
 // "OpaqueEcommerceServiceClient" to call the correct interceptors. This client ignores the HTTP middlewares.
-func RegisterOpaqueEcommerceServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux, client OpaqueEcommerceServiceClient) error {
+func RegisterOpaqueEcommerceServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux, client OpaqueEcommerceServiceClient) (err error) {
+	ctx, finishRegistration, err := mux.BeginRegistration(ctx)
+	if err != nil {
+		return err
+	}
+	defer finishRegistration(&err)
 	mux.Handle(http.MethodGet, pattern_OpaqueEcommerceService_OpaqueGetProduct_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()

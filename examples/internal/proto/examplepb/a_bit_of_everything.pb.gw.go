@@ -22,7 +22,6 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/v2/utilities"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/grpclog"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/proto"
@@ -2397,7 +2396,12 @@ func local_request_SnakeEnumService_SnakeEnum_0(ctx context.Context, marshaler r
 // StreamingRPC :currently unsupported pending https://github.com/grpc/grpc-go/issues/906.
 // Note that using this registration option will cause many gRPC library features to stop working. Consider using RegisterABitOfEverythingServiceHandlerFromEndpoint instead.
 // GRPC interceptors will not work for this type of registration. To use interceptors, you must use the "runtime.WithMiddlewares" option in the "runtime.NewServeMux" call.
-func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux, server ABitOfEverythingServiceServer) error {
+func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux, server ABitOfEverythingServiceServer) (err error) {
+	ctx, finishRegistration, err := mux.BeginRegistration(ctx)
+	if err != nil {
+		return err
+	}
+	defer finishRegistration(&err)
 	mux.Handle(http.MethodPost, pattern_ABitOfEverythingService_Create_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -2418,6 +2422,7 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 		}
 		forward_ABitOfEverythingService_Create_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodPost, pattern_ABitOfEverythingService_CreateBody_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -2438,6 +2443,7 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 		}
 		forward_ABitOfEverythingService_CreateBody_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodPut, pattern_ABitOfEverythingService_UpdateEntity_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -2458,6 +2464,7 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 		}
 		forward_ABitOfEverythingService_UpdateEntity_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodPost, pattern_ABitOfEverythingService_CreateBook_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -2478,6 +2485,7 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 		}
 		forward_ABitOfEverythingService_CreateBook_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodPatch, pattern_ABitOfEverythingService_UpdateBook_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -2498,6 +2506,7 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 		}
 		forward_ABitOfEverythingService_UpdateBook_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodGet, pattern_ABitOfEverythingService_Lookup_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -2518,6 +2527,7 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 		}
 		forward_ABitOfEverythingService_Lookup_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodPost, pattern_ABitOfEverythingService_Custom_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -2538,6 +2548,7 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 		}
 		forward_ABitOfEverythingService_Custom_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodGet, pattern_ABitOfEverythingService_Custom_1, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -2558,6 +2569,7 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 		}
 		forward_ABitOfEverythingService_Custom_1(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodPost, pattern_ABitOfEverythingService_DoubleColon_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -2578,6 +2590,7 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 		}
 		forward_ABitOfEverythingService_DoubleColon_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodPut, pattern_ABitOfEverythingService_Update_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -2598,6 +2611,7 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 		}
 		forward_ABitOfEverythingService_Update_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodPut, pattern_ABitOfEverythingService_UpdateV2_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -2618,6 +2632,7 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 		}
 		forward_ABitOfEverythingService_UpdateV2_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodPatch, pattern_ABitOfEverythingService_UpdateV2_1, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -2638,6 +2653,7 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 		}
 		forward_ABitOfEverythingService_UpdateV2_1(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodPatch, pattern_ABitOfEverythingService_UpdateV2_2, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -2658,6 +2674,7 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 		}
 		forward_ABitOfEverythingService_UpdateV2_2(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodPost, pattern_ABitOfEverythingService_CreateNestedBodyOneof_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -2678,6 +2695,7 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 		}
 		forward_ABitOfEverythingService_CreateNestedBodyOneof_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodDelete, pattern_ABitOfEverythingService_Delete_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -2698,6 +2716,7 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 		}
 		forward_ABitOfEverythingService_Delete_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodGet, pattern_ABitOfEverythingService_GetQuery_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -2718,6 +2737,7 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 		}
 		forward_ABitOfEverythingService_GetQuery_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodGet, pattern_ABitOfEverythingService_GetRepeatedQuery_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -2738,6 +2758,7 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 		}
 		forward_ABitOfEverythingService_GetRepeatedQuery_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodGet, pattern_ABitOfEverythingService_Echo_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -2758,6 +2779,7 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 		}
 		forward_ABitOfEverythingService_Echo_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodPost, pattern_ABitOfEverythingService_Echo_1, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -2778,6 +2800,7 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 		}
 		forward_ABitOfEverythingService_Echo_1(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodGet, pattern_ABitOfEverythingService_Echo_2, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -2798,6 +2821,7 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 		}
 		forward_ABitOfEverythingService_Echo_2(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodPost, pattern_ABitOfEverythingService_DeepPathEcho_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -2818,6 +2842,7 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 		}
 		forward_ABitOfEverythingService_DeepPathEcho_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodGet, pattern_ABitOfEverythingService_Timeout_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -2838,6 +2863,7 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 		}
 		forward_ABitOfEverythingService_Timeout_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodGet, pattern_ABitOfEverythingService_ErrorWithDetails_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -2858,6 +2884,7 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 		}
 		forward_ABitOfEverythingService_ErrorWithDetails_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodPost, pattern_ABitOfEverythingService_GetMessageWithBody_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -2878,6 +2905,7 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 		}
 		forward_ABitOfEverythingService_GetMessageWithBody_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodPost, pattern_ABitOfEverythingService_PostWithEmptyBody_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -2898,6 +2926,7 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 		}
 		forward_ABitOfEverythingService_PostWithEmptyBody_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodGet, pattern_ABitOfEverythingService_CheckGetQueryParams_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -2918,6 +2947,7 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 		}
 		forward_ABitOfEverythingService_CheckGetQueryParams_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodGet, pattern_ABitOfEverythingService_CheckNestedEnumGetQueryParams_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -2938,6 +2968,7 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 		}
 		forward_ABitOfEverythingService_CheckNestedEnumGetQueryParams_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodPost, pattern_ABitOfEverythingService_CheckPostQueryParams_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -2958,6 +2989,7 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 		}
 		forward_ABitOfEverythingService_CheckPostQueryParams_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodPost, pattern_ABitOfEverythingService_OverwriteRequestContentType_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -2978,6 +3010,7 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 		}
 		forward_ABitOfEverythingService_OverwriteRequestContentType_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodGet, pattern_ABitOfEverythingService_OverwriteResponseContentType_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -2998,6 +3031,7 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 		}
 		forward_ABitOfEverythingService_OverwriteResponseContentType_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodGet, pattern_ABitOfEverythingService_CheckExternalPathEnum_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -3018,6 +3052,7 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 		}
 		forward_ABitOfEverythingService_CheckExternalPathEnum_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodGet, pattern_ABitOfEverythingService_CheckExternalNestedPathEnum_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -3038,6 +3073,7 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 		}
 		forward_ABitOfEverythingService_CheckExternalNestedPathEnum_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodGet, pattern_ABitOfEverythingService_CheckStatus_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -3058,6 +3094,7 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 		}
 		forward_ABitOfEverythingService_CheckStatus_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodHead, pattern_ABitOfEverythingService_Exists_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -3078,6 +3115,7 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 		}
 		forward_ABitOfEverythingService_Exists_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodOptions, pattern_ABitOfEverythingService_CustomOptionsRequest_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -3098,6 +3136,7 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 		}
 		forward_ABitOfEverythingService_CustomOptionsRequest_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodTrace, pattern_ABitOfEverythingService_TraceRequest_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -3118,6 +3157,7 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 		}
 		forward_ABitOfEverythingService_TraceRequest_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodPost, pattern_ABitOfEverythingService_PostOneofEnum_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -3138,6 +3178,7 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 		}
 		forward_ABitOfEverythingService_PostOneofEnum_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodPost, pattern_ABitOfEverythingService_PostRequiredMessageType_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -3167,7 +3208,12 @@ func RegisterABitOfEverythingServiceHandlerServer(ctx context.Context, mux *runt
 // StreamingRPC :currently unsupported pending https://github.com/grpc/grpc-go/issues/906.
 // Note that using this registration option will cause many gRPC library features to stop working. Consider using RegisterCamelCaseServiceNameHandlerFromEndpoint instead.
 // GRPC interceptors will not work for this type of registration. To use interceptors, you must use the "runtime.WithMiddlewares" option in the "runtime.NewServeMux" call.
-func RegisterCamelCaseServiceNameHandlerServer(ctx context.Context, mux *runtime.ServeMux, server CamelCaseServiceNameServer) error {
+func RegisterCamelCaseServiceNameHandlerServer(ctx context.Context, mux *runtime.ServeMux, server CamelCaseServiceNameServer) (err error) {
+	ctx, finishRegistration, err := mux.BeginRegistration(ctx)
+	if err != nil {
+		return err
+	}
+	defer finishRegistration(&err)
 	mux.Handle(http.MethodGet, pattern_CamelCaseServiceName_Empty_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -3197,7 +3243,12 @@ func RegisterCamelCaseServiceNameHandlerServer(ctx context.Context, mux *runtime
 // StreamingRPC :currently unsupported pending https://github.com/grpc/grpc-go/issues/906.
 // Note that using this registration option will cause many gRPC library features to stop working. Consider using RegisterSnakeEnumServiceHandlerFromEndpoint instead.
 // GRPC interceptors will not work for this type of registration. To use interceptors, you must use the "runtime.WithMiddlewares" option in the "runtime.NewServeMux" call.
-func RegisterSnakeEnumServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux, server SnakeEnumServiceServer) error {
+func RegisterSnakeEnumServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux, server SnakeEnumServiceServer) (err error) {
+	ctx, finishRegistration, err := mux.BeginRegistration(ctx)
+	if err != nil {
+		return err
+	}
+	defer finishRegistration(&err)
 	mux.Handle(http.MethodGet, pattern_SnakeEnumService_SnakeEnum_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -3224,26 +3275,12 @@ func RegisterSnakeEnumServiceHandlerServer(ctx context.Context, mux *runtime.Ser
 
 // RegisterABitOfEverythingServiceHandlerFromEndpoint is same as RegisterABitOfEverythingServiceHandler but
 // automatically dials to "endpoint" and closes the connection when "ctx" gets done.
-func RegisterABitOfEverythingServiceHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) (err error) {
-	conn, err := grpc.NewClient(endpoint, opts...)
-	if err != nil {
-		return err
-	}
-	defer func() {
-		if err != nil {
-			if cerr := conn.Close(); cerr != nil {
-				grpclog.Errorf("Failed to close conn to %s: %v", endpoint, cerr)
-			}
-			return
-		}
-		go func() {
-			<-ctx.Done()
-			if cerr := conn.Close(); cerr != nil {
-				grpclog.Errorf("Failed to close conn to %s: %v", endpoint, cerr)
-			}
-		}()
-	}()
-	return RegisterABitOfEverythingServiceHandler(ctx, mux, conn)
+// When the mux was configured with runtime.WithUpstreamConns, the connection is owned by
+// the gateway, shared per endpoint and dial options, and released on "ctx" cancellation.
+func RegisterABitOfEverythingServiceHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) error {
+	return mux.RegisterFromEndpoint(ctx, endpoint, opts, func(ctx context.Context, conn *grpc.ClientConn) error {
+		return RegisterABitOfEverythingServiceHandler(ctx, mux, conn)
+	})
 }
 
 // RegisterABitOfEverythingServiceHandler registers the http handlers for service ABitOfEverythingService to "mux".
@@ -3257,7 +3294,12 @@ func RegisterABitOfEverythingServiceHandler(ctx context.Context, mux *runtime.Se
 // Note: the gRPC framework executes interceptors within the gRPC handler. If the passed in "ABitOfEverythingServiceClient"
 // doesn't go through the normal gRPC flow (creating a gRPC client etc.) then it will be up to the passed in
 // "ABitOfEverythingServiceClient" to call the correct interceptors. This client ignores the HTTP middlewares.
-func RegisterABitOfEverythingServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux, client ABitOfEverythingServiceClient) error {
+func RegisterABitOfEverythingServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux, client ABitOfEverythingServiceClient) (err error) {
+	ctx, finishRegistration, err := mux.BeginRegistration(ctx)
+	if err != nil {
+		return err
+	}
+	defer finishRegistration(&err)
 	mux.Handle(http.MethodPost, pattern_ABitOfEverythingService_Create_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -3991,26 +4033,12 @@ var (
 
 // RegisterCamelCaseServiceNameHandlerFromEndpoint is same as RegisterCamelCaseServiceNameHandler but
 // automatically dials to "endpoint" and closes the connection when "ctx" gets done.
-func RegisterCamelCaseServiceNameHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) (err error) {
-	conn, err := grpc.NewClient(endpoint, opts...)
-	if err != nil {
-		return err
-	}
-	defer func() {
-		if err != nil {
-			if cerr := conn.Close(); cerr != nil {
-				grpclog.Errorf("Failed to close conn to %s: %v", endpoint, cerr)
-			}
-			return
-		}
-		go func() {
-			<-ctx.Done()
-			if cerr := conn.Close(); cerr != nil {
-				grpclog.Errorf("Failed to close conn to %s: %v", endpoint, cerr)
-			}
-		}()
-	}()
-	return RegisterCamelCaseServiceNameHandler(ctx, mux, conn)
+// When the mux was configured with runtime.WithUpstreamConns, the connection is owned by
+// the gateway, shared per endpoint and dial options, and released on "ctx" cancellation.
+func RegisterCamelCaseServiceNameHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) error {
+	return mux.RegisterFromEndpoint(ctx, endpoint, opts, func(ctx context.Context, conn *grpc.ClientConn) error {
+		return RegisterCamelCaseServiceNameHandler(ctx, mux, conn)
+	})
 }
 
 // RegisterCamelCaseServiceNameHandler registers the http handlers for service CamelCaseServiceName to "mux".
@@ -4024,7 +4052,12 @@ func RegisterCamelCaseServiceNameHandler(ctx context.Context, mux *runtime.Serve
 // Note: the gRPC framework executes interceptors within the gRPC handler. If the passed in "CamelCaseServiceNameClient"
 // doesn't go through the normal gRPC flow (creating a gRPC client etc.) then it will be up to the passed in
 // "CamelCaseServiceNameClient" to call the correct interceptors. This client ignores the HTTP middlewares.
-func RegisterCamelCaseServiceNameHandlerClient(ctx context.Context, mux *runtime.ServeMux, client CamelCaseServiceNameClient) error {
+func RegisterCamelCaseServiceNameHandlerClient(ctx context.Context, mux *runtime.ServeMux, client CamelCaseServiceNameClient) (err error) {
+	ctx, finishRegistration, err := mux.BeginRegistration(ctx)
+	if err != nil {
+		return err
+	}
+	defer finishRegistration(&err)
 	mux.Handle(http.MethodGet, pattern_CamelCaseServiceName_Empty_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -4055,26 +4088,12 @@ var (
 
 // RegisterSnakeEnumServiceHandlerFromEndpoint is same as RegisterSnakeEnumServiceHandler but
 // automatically dials to "endpoint" and closes the connection when "ctx" gets done.
-func RegisterSnakeEnumServiceHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) (err error) {
-	conn, err := grpc.NewClient(endpoint, opts...)
-	if err != nil {
-		return err
-	}
-	defer func() {
-		if err != nil {
-			if cerr := conn.Close(); cerr != nil {
-				grpclog.Errorf("Failed to close conn to %s: %v", endpoint, cerr)
-			}
-			return
-		}
-		go func() {
-			<-ctx.Done()
-			if cerr := conn.Close(); cerr != nil {
-				grpclog.Errorf("Failed to close conn to %s: %v", endpoint, cerr)
-			}
-		}()
-	}()
-	return RegisterSnakeEnumServiceHandler(ctx, mux, conn)
+// When the mux was configured with runtime.WithUpstreamConns, the connection is owned by
+// the gateway, shared per endpoint and dial options, and released on "ctx" cancellation.
+func RegisterSnakeEnumServiceHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) error {
+	return mux.RegisterFromEndpoint(ctx, endpoint, opts, func(ctx context.Context, conn *grpc.ClientConn) error {
+		return RegisterSnakeEnumServiceHandler(ctx, mux, conn)
+	})
 }
 
 // RegisterSnakeEnumServiceHandler registers the http handlers for service SnakeEnumService to "mux".
@@ -4088,7 +4107,12 @@ func RegisterSnakeEnumServiceHandler(ctx context.Context, mux *runtime.ServeMux,
 // Note: the gRPC framework executes interceptors within the gRPC handler. If the passed in "SnakeEnumServiceClient"
 // doesn't go through the normal gRPC flow (creating a gRPC client etc.) then it will be up to the passed in
 // "SnakeEnumServiceClient" to call the correct interceptors. This client ignores the HTTP middlewares.
-func RegisterSnakeEnumServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux, client SnakeEnumServiceClient) error {
+func RegisterSnakeEnumServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux, client SnakeEnumServiceClient) (err error) {
+	ctx, finishRegistration, err := mux.BeginRegistration(ctx)
+	if err != nil {
+		return err
+	}
+	defer finishRegistration(&err)
 	mux.Handle(http.MethodGet, pattern_SnakeEnumService_SnakeEnum_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()

@@ -18,7 +18,6 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/v2/utilities"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/grpclog"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/proto"
@@ -148,7 +147,12 @@ func local_request_ServiceC_MethodTwo_0(ctx context.Context, marshaler runtime.M
 // StreamingRPC :currently unsupported pending https://github.com/grpc/grpc-go/issues/906.
 // Note that using this registration option will cause many gRPC library features to stop working. Consider using RegisterServiceAHandlerFromEndpoint instead.
 // GRPC interceptors will not work for this type of registration. To use interceptors, you must use the "runtime.WithMiddlewares" option in the "runtime.NewServeMux" call.
-func RegisterServiceAHandlerServer(ctx context.Context, mux *runtime.ServeMux, server ServiceAServer) error {
+func RegisterServiceAHandlerServer(ctx context.Context, mux *runtime.ServeMux, server ServiceAServer) (err error) {
+	ctx, finishRegistration, err := mux.BeginRegistration(ctx)
+	if err != nil {
+		return err
+	}
+	defer finishRegistration(&err)
 	mux.Handle(http.MethodPost, pattern_ServiceA_MethodOne_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -169,6 +173,7 @@ func RegisterServiceAHandlerServer(ctx context.Context, mux *runtime.ServeMux, s
 		}
 		forward_ServiceA_MethodOne_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodPost, pattern_ServiceA_MethodTwo_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -198,7 +203,12 @@ func RegisterServiceAHandlerServer(ctx context.Context, mux *runtime.ServeMux, s
 // StreamingRPC :currently unsupported pending https://github.com/grpc/grpc-go/issues/906.
 // Note that using this registration option will cause many gRPC library features to stop working. Consider using RegisterServiceCHandlerFromEndpoint instead.
 // GRPC interceptors will not work for this type of registration. To use interceptors, you must use the "runtime.WithMiddlewares" option in the "runtime.NewServeMux" call.
-func RegisterServiceCHandlerServer(ctx context.Context, mux *runtime.ServeMux, server ServiceCServer) error {
+func RegisterServiceCHandlerServer(ctx context.Context, mux *runtime.ServeMux, server ServiceCServer) (err error) {
+	ctx, finishRegistration, err := mux.BeginRegistration(ctx)
+	if err != nil {
+		return err
+	}
+	defer finishRegistration(&err)
 	mux.Handle(http.MethodPost, pattern_ServiceC_MethodOne_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -219,6 +229,7 @@ func RegisterServiceCHandlerServer(ctx context.Context, mux *runtime.ServeMux, s
 		}
 		forward_ServiceC_MethodOne_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodPost, pattern_ServiceC_MethodTwo_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -245,26 +256,12 @@ func RegisterServiceCHandlerServer(ctx context.Context, mux *runtime.ServeMux, s
 
 // RegisterServiceAHandlerFromEndpoint is same as RegisterServiceAHandler but
 // automatically dials to "endpoint" and closes the connection when "ctx" gets done.
-func RegisterServiceAHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) (err error) {
-	conn, err := grpc.NewClient(endpoint, opts...)
-	if err != nil {
-		return err
-	}
-	defer func() {
-		if err != nil {
-			if cerr := conn.Close(); cerr != nil {
-				grpclog.Errorf("Failed to close conn to %s: %v", endpoint, cerr)
-			}
-			return
-		}
-		go func() {
-			<-ctx.Done()
-			if cerr := conn.Close(); cerr != nil {
-				grpclog.Errorf("Failed to close conn to %s: %v", endpoint, cerr)
-			}
-		}()
-	}()
-	return RegisterServiceAHandler(ctx, mux, conn)
+// When the mux was configured with runtime.WithUpstreamConns, the connection is owned by
+// the gateway, shared per endpoint and dial options, and released on "ctx" cancellation.
+func RegisterServiceAHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) error {
+	return mux.RegisterFromEndpoint(ctx, endpoint, opts, func(ctx context.Context, conn *grpc.ClientConn) error {
+		return RegisterServiceAHandler(ctx, mux, conn)
+	})
 }
 
 // RegisterServiceAHandler registers the http handlers for service ServiceA to "mux".
@@ -278,7 +275,12 @@ func RegisterServiceAHandler(ctx context.Context, mux *runtime.ServeMux, conn *g
 // Note: the gRPC framework executes interceptors within the gRPC handler. If the passed in "ServiceAClient"
 // doesn't go through the normal gRPC flow (creating a gRPC client etc.) then it will be up to the passed in
 // "ServiceAClient" to call the correct interceptors. This client ignores the HTTP middlewares.
-func RegisterServiceAHandlerClient(ctx context.Context, mux *runtime.ServeMux, client ServiceAClient) error {
+func RegisterServiceAHandlerClient(ctx context.Context, mux *runtime.ServeMux, client ServiceAClient) (err error) {
+	ctx, finishRegistration, err := mux.BeginRegistration(ctx)
+	if err != nil {
+		return err
+	}
+	defer finishRegistration(&err)
 	mux.Handle(http.MethodPost, pattern_ServiceA_MethodOne_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -328,26 +330,12 @@ var (
 
 // RegisterServiceCHandlerFromEndpoint is same as RegisterServiceCHandler but
 // automatically dials to "endpoint" and closes the connection when "ctx" gets done.
-func RegisterServiceCHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) (err error) {
-	conn, err := grpc.NewClient(endpoint, opts...)
-	if err != nil {
-		return err
-	}
-	defer func() {
-		if err != nil {
-			if cerr := conn.Close(); cerr != nil {
-				grpclog.Errorf("Failed to close conn to %s: %v", endpoint, cerr)
-			}
-			return
-		}
-		go func() {
-			<-ctx.Done()
-			if cerr := conn.Close(); cerr != nil {
-				grpclog.Errorf("Failed to close conn to %s: %v", endpoint, cerr)
-			}
-		}()
-	}()
-	return RegisterServiceCHandler(ctx, mux, conn)
+// When the mux was configured with runtime.WithUpstreamConns, the connection is owned by
+// the gateway, shared per endpoint and dial options, and released on "ctx" cancellation.
+func RegisterServiceCHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) error {
+	return mux.RegisterFromEndpoint(ctx, endpoint, opts, func(ctx context.Context, conn *grpc.ClientConn) error {
+		return RegisterServiceCHandler(ctx, mux, conn)
+	})
 }
 
 // RegisterServiceCHandler registers the http handlers for service ServiceC to "mux".
@@ -361,7 +349,12 @@ func RegisterServiceCHandler(ctx context.Context, mux *runtime.ServeMux, conn *g
 // Note: the gRPC framework executes interceptors within the gRPC handler. If the passed in "ServiceCClient"
 // doesn't go through the normal gRPC flow (creating a gRPC client etc.) then it will be up to the passed in
 // "ServiceCClient" to call the correct interceptors. This client ignores the HTTP middlewares.
-func RegisterServiceCHandlerClient(ctx context.Context, mux *runtime.ServeMux, client ServiceCClient) error {
+func RegisterServiceCHandlerClient(ctx context.Context, mux *runtime.ServeMux, client ServiceCClient) (err error) {
+	ctx, finishRegistration, err := mux.BeginRegistration(ctx)
+	if err != nil {
+		return err
+	}
+	defer finishRegistration(&err)
 	mux.Handle(http.MethodPost, pattern_ServiceC_MethodOne_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()

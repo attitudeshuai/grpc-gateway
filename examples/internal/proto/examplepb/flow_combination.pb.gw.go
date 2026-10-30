@@ -1158,7 +1158,12 @@ func request_FlowCombination_RpcPathNestedStream_2(ctx context.Context, marshale
 // StreamingRPC :currently unsupported pending https://github.com/grpc/grpc-go/issues/906.
 // Note that using this registration option will cause many gRPC library features to stop working. Consider using RegisterFlowCombinationHandlerFromEndpoint instead.
 // GRPC interceptors will not work for this type of registration. To use interceptors, you must use the "runtime.WithMiddlewares" option in the "runtime.NewServeMux" call.
-func RegisterFlowCombinationHandlerServer(ctx context.Context, mux *runtime.ServeMux, server FlowCombinationServer) error {
+func RegisterFlowCombinationHandlerServer(ctx context.Context, mux *runtime.ServeMux, server FlowCombinationServer) (err error) {
+	ctx, finishRegistration, err := mux.BeginRegistration(ctx)
+	if err != nil {
+		return err
+	}
+	defer finishRegistration(&err)
 	mux.Handle(http.MethodPost, pattern_FlowCombination_RpcEmptyRpc_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -1200,6 +1205,7 @@ func RegisterFlowCombinationHandlerServer(ctx context.Context, mux *runtime.Serv
 		runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 		return
 	})
+
 	mux.Handle(http.MethodPost, pattern_FlowCombination_RpcBodyRpc_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -1220,6 +1226,7 @@ func RegisterFlowCombinationHandlerServer(ctx context.Context, mux *runtime.Serv
 		}
 		forward_FlowCombination_RpcBodyRpc_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodPost, pattern_FlowCombination_RpcBodyRpc_1, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -1240,6 +1247,7 @@ func RegisterFlowCombinationHandlerServer(ctx context.Context, mux *runtime.Serv
 		}
 		forward_FlowCombination_RpcBodyRpc_1(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodPost, pattern_FlowCombination_RpcBodyRpc_2, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -1260,6 +1268,7 @@ func RegisterFlowCombinationHandlerServer(ctx context.Context, mux *runtime.Serv
 		}
 		forward_FlowCombination_RpcBodyRpc_2(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodPost, pattern_FlowCombination_RpcBodyRpc_3, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -1280,6 +1289,7 @@ func RegisterFlowCombinationHandlerServer(ctx context.Context, mux *runtime.Serv
 		}
 		forward_FlowCombination_RpcBodyRpc_3(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodPost, pattern_FlowCombination_RpcBodyRpc_4, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -1300,6 +1310,7 @@ func RegisterFlowCombinationHandlerServer(ctx context.Context, mux *runtime.Serv
 		}
 		forward_FlowCombination_RpcBodyRpc_4(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodPost, pattern_FlowCombination_RpcBodyRpc_5, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -1320,6 +1331,7 @@ func RegisterFlowCombinationHandlerServer(ctx context.Context, mux *runtime.Serv
 		}
 		forward_FlowCombination_RpcBodyRpc_5(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodPost, pattern_FlowCombination_RpcBodyRpc_6, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -1340,6 +1352,7 @@ func RegisterFlowCombinationHandlerServer(ctx context.Context, mux *runtime.Serv
 		}
 		forward_FlowCombination_RpcBodyRpc_6(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodPost, pattern_FlowCombination_RpcPathSingleNestedRpc_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -1360,6 +1373,7 @@ func RegisterFlowCombinationHandlerServer(ctx context.Context, mux *runtime.Serv
 		}
 		forward_FlowCombination_RpcPathSingleNestedRpc_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodPost, pattern_FlowCombination_RpcPathNestedRpc_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -1380,6 +1394,7 @@ func RegisterFlowCombinationHandlerServer(ctx context.Context, mux *runtime.Serv
 		}
 		forward_FlowCombination_RpcPathNestedRpc_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodPost, pattern_FlowCombination_RpcPathNestedRpc_1, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -1400,6 +1415,7 @@ func RegisterFlowCombinationHandlerServer(ctx context.Context, mux *runtime.Serv
 		}
 		forward_FlowCombination_RpcPathNestedRpc_1(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodPost, pattern_FlowCombination_RpcPathNestedRpc_2, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -1503,26 +1519,12 @@ func RegisterFlowCombinationHandlerServer(ctx context.Context, mux *runtime.Serv
 
 // RegisterFlowCombinationHandlerFromEndpoint is same as RegisterFlowCombinationHandler but
 // automatically dials to "endpoint" and closes the connection when "ctx" gets done.
-func RegisterFlowCombinationHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) (err error) {
-	conn, err := grpc.NewClient(endpoint, opts...)
-	if err != nil {
-		return err
-	}
-	defer func() {
-		if err != nil {
-			if cerr := conn.Close(); cerr != nil {
-				grpclog.Errorf("Failed to close conn to %s: %v", endpoint, cerr)
-			}
-			return
-		}
-		go func() {
-			<-ctx.Done()
-			if cerr := conn.Close(); cerr != nil {
-				grpclog.Errorf("Failed to close conn to %s: %v", endpoint, cerr)
-			}
-		}()
-	}()
-	return RegisterFlowCombinationHandler(ctx, mux, conn)
+// When the mux was configured with runtime.WithUpstreamConns, the connection is owned by
+// the gateway, shared per endpoint and dial options, and released on "ctx" cancellation.
+func RegisterFlowCombinationHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) error {
+	return mux.RegisterFromEndpoint(ctx, endpoint, opts, func(ctx context.Context, conn *grpc.ClientConn) error {
+		return RegisterFlowCombinationHandler(ctx, mux, conn)
+	})
 }
 
 // RegisterFlowCombinationHandler registers the http handlers for service FlowCombination to "mux".
@@ -1536,7 +1538,12 @@ func RegisterFlowCombinationHandler(ctx context.Context, mux *runtime.ServeMux, 
 // Note: the gRPC framework executes interceptors within the gRPC handler. If the passed in "FlowCombinationClient"
 // doesn't go through the normal gRPC flow (creating a gRPC client etc.) then it will be up to the passed in
 // "FlowCombinationClient" to call the correct interceptors. This client ignores the HTTP middlewares.
-func RegisterFlowCombinationHandlerClient(ctx context.Context, mux *runtime.ServeMux, client FlowCombinationClient) error {
+func RegisterFlowCombinationHandlerClient(ctx context.Context, mux *runtime.ServeMux, client FlowCombinationClient) (err error) {
+	ctx, finishRegistration, err := mux.BeginRegistration(ctx)
+	if err != nil {
+		return err
+	}
+	defer finishRegistration(&err)
 	mux.Handle(http.MethodPost, pattern_FlowCombination_RpcEmptyRpc_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()

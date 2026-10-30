@@ -784,7 +784,12 @@ func local_request_{{ .Method.Service.GetName }}_{{ .Method.GetName }}_{{ .Index
 // StreamingRPC :currently unsupported pending https://github.com/grpc/grpc-go/issues/906.
 // Note that using this registration option will cause many gRPC library features to stop working. Consider using Register{{ $svc.GetName }}{{ $.RegisterFuncSuffix }}FromEndpoint instead.
 // GRPC interceptors will not work for this type of registration. To use interceptors, you must use the "runtime.WithMiddlewares" option in the "runtime.NewServeMux" call.
-func Register{{ $svc.GetName }}{{ $.RegisterFuncSuffix }}Server(ctx context.Context, mux *runtime.ServeMux, server {{ $svc.InstanceName }}Server) error {
+func Register{{ $svc.GetName }}{{ $.RegisterFuncSuffix }}Server(ctx context.Context, mux *runtime.ServeMux, server {{ $svc.InstanceName }}Server) (err error) {
+	ctx, finishRegistration, err := mux.BeginRegistration(ctx)
+	if err != nil {
+		return err
+	}
+	defer finishRegistration(&err)
 	{{- range $m := $svc.Methods }}
 	{{- range $b := $m.Bindings }}
 	{{- if or $m.GetClientStreaming $m.GetServerStreaming }}
@@ -794,7 +799,7 @@ func Register{{ $svc.GetName }}{{ $.RegisterFuncSuffix }}Server(ctx context.Cont
 		runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 		return
 	})
-	{{- else -}}
+	{{- else }}
 	mux.Handle({{ $b.HTTPMethod | toHTTPMethod}}, pattern_{{ $svc.GetName }}_{{ $m.GetName }}_{{ $b.Index }}, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 	{{- if $UseRequestContext }}
 		ctx, cancel := context.WithCancel(req.Context())
@@ -840,26 +845,12 @@ func Register{{ $svc.GetName }}{{ $.RegisterFuncSuffix }}Server(ctx context.Cont
 {{range $svc := .Services}}
 // Register{{ $svc.GetName }}{{ $.RegisterFuncSuffix }}FromEndpoint is same as Register{{ $svc.GetName }}{{ $.RegisterFuncSuffix }} but
 // automatically dials to "endpoint" and closes the connection when "ctx" gets done.
-func Register{{ $svc.GetName }}{{ $.RegisterFuncSuffix }}FromEndpoint(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) (err error) {
-	conn, err := grpc.NewClient(endpoint, opts...)
-	if err != nil {
-		return err
-	}
-	defer func() {
-		if err != nil {
-			if cerr := conn.Close(); cerr != nil {
-				grpclog.Errorf("Failed to close conn to %s: %v", endpoint, cerr)
-			}
-			return
-		}
-		go func() {
-			<-ctx.Done()
-			if cerr := conn.Close(); cerr != nil {
-				grpclog.Errorf("Failed to close conn to %s: %v", endpoint, cerr)
-			}
-		}()
-	}()
-	return Register{{ $svc.GetName }}{{ $.RegisterFuncSuffix }}(ctx, mux, conn)
+// When the mux was configured with runtime.WithUpstreamConns, the connection is owned by
+// the gateway, shared per endpoint and dial options, and released on "ctx" cancellation.
+func Register{{ $svc.GetName }}{{ $.RegisterFuncSuffix }}FromEndpoint(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) error {
+	return mux.RegisterFromEndpoint(ctx, endpoint, opts, func(ctx context.Context, conn *grpc.ClientConn) error {
+		return Register{{ $svc.GetName }}{{ $.RegisterFuncSuffix }}(ctx, mux, conn)
+	})
 }
 
 // Register{{ $svc.GetName}}{{ $.RegisterFuncSuffix}} registers the http handlers for service {{ $svc.GetName }} to "mux".
@@ -873,7 +864,12 @@ func Register{{ $svc.GetName }}{{ $.RegisterFuncSuffix }}(ctx context.Context, m
 // Note: the gRPC framework executes interceptors within the gRPC handler. If the passed in "{{ $svc.InstanceName }}Client"
 // doesn't go through the normal gRPC flow (creating a gRPC client etc.) then it will be up to the passed in
 // "{{ $svc.InstanceName }}Client" to call the correct interceptors. This client ignores the HTTP middlewares.
-func Register{{ $svc.GetName }}{{ $.RegisterFuncSuffix }}Client(ctx context.Context, mux *runtime.ServeMux, client {{ $svc.InstanceName }}Client) error {
+func Register{{ $svc.GetName }}{{ $.RegisterFuncSuffix }}Client(ctx context.Context, mux *runtime.ServeMux, client {{ $svc.InstanceName }}Client) (err error) {
+	ctx, finishRegistration, err := mux.BeginRegistration(ctx)
+	if err != nil {
+		return err
+	}
+	defer finishRegistration(&err)
 	{{- range $m := $svc.Methods }}
 	{{- range $b := $m.Bindings }}
 	mux.Handle({{ $b.HTTPMethod | toHTTPMethod }}, pattern_{{ $svc.GetName }}_{{ $m.GetName }}_{{ $b.Index }}, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {

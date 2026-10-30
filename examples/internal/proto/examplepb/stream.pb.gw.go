@@ -225,7 +225,12 @@ func request_StreamService_Download_0(ctx context.Context, marshaler runtime.Mar
 // StreamingRPC :currently unsupported pending https://github.com/grpc/grpc-go/issues/906.
 // Note that using this registration option will cause many gRPC library features to stop working. Consider using RegisterStreamServiceHandlerFromEndpoint instead.
 // GRPC interceptors will not work for this type of registration. To use interceptors, you must use the "runtime.WithMiddlewares" option in the "runtime.NewServeMux" call.
-func RegisterStreamServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux, server StreamServiceServer) error {
+func RegisterStreamServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux, server StreamServiceServer) (err error) {
+	ctx, finishRegistration, err := mux.BeginRegistration(ctx)
+	if err != nil {
+		return err
+	}
+	defer finishRegistration(&err)
 	mux.Handle(http.MethodPost, pattern_StreamService_BulkCreate_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		err := status.Error(codes.Unimplemented, "streaming calls are not yet supported in the in-process transport")
 		_, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -266,26 +271,12 @@ func RegisterStreamServiceHandlerServer(ctx context.Context, mux *runtime.ServeM
 
 // RegisterStreamServiceHandlerFromEndpoint is same as RegisterStreamServiceHandler but
 // automatically dials to "endpoint" and closes the connection when "ctx" gets done.
-func RegisterStreamServiceHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) (err error) {
-	conn, err := grpc.NewClient(endpoint, opts...)
-	if err != nil {
-		return err
-	}
-	defer func() {
-		if err != nil {
-			if cerr := conn.Close(); cerr != nil {
-				grpclog.Errorf("Failed to close conn to %s: %v", endpoint, cerr)
-			}
-			return
-		}
-		go func() {
-			<-ctx.Done()
-			if cerr := conn.Close(); cerr != nil {
-				grpclog.Errorf("Failed to close conn to %s: %v", endpoint, cerr)
-			}
-		}()
-	}()
-	return RegisterStreamServiceHandler(ctx, mux, conn)
+// When the mux was configured with runtime.WithUpstreamConns, the connection is owned by
+// the gateway, shared per endpoint and dial options, and released on "ctx" cancellation.
+func RegisterStreamServiceHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) error {
+	return mux.RegisterFromEndpoint(ctx, endpoint, opts, func(ctx context.Context, conn *grpc.ClientConn) error {
+		return RegisterStreamServiceHandler(ctx, mux, conn)
+	})
 }
 
 // RegisterStreamServiceHandler registers the http handlers for service StreamService to "mux".
@@ -299,7 +290,12 @@ func RegisterStreamServiceHandler(ctx context.Context, mux *runtime.ServeMux, co
 // Note: the gRPC framework executes interceptors within the gRPC handler. If the passed in "StreamServiceClient"
 // doesn't go through the normal gRPC flow (creating a gRPC client etc.) then it will be up to the passed in
 // "StreamServiceClient" to call the correct interceptors. This client ignores the HTTP middlewares.
-func RegisterStreamServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux, client StreamServiceClient) error {
+func RegisterStreamServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux, client StreamServiceClient) (err error) {
+	ctx, finishRegistration, err := mux.BeginRegistration(ctx)
+	if err != nil {
+		return err
+	}
+	defer finishRegistration(&err)
 	mux.Handle(http.MethodPost, pattern_StreamService_BulkCreate_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()

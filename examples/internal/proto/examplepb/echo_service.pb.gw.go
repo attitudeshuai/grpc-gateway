@@ -18,7 +18,6 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/v2/utilities"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/grpclog"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/proto"
@@ -767,7 +766,12 @@ func local_request_EchoService_EchoStatus_0(ctx context.Context, marshaler runti
 // StreamingRPC :currently unsupported pending https://github.com/grpc/grpc-go/issues/906.
 // Note that using this registration option will cause many gRPC library features to stop working. Consider using RegisterEchoServiceHandlerFromEndpoint instead.
 // GRPC interceptors will not work for this type of registration. To use interceptors, you must use the "runtime.WithMiddlewares" option in the "runtime.NewServeMux" call.
-func RegisterEchoServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux, server EchoServiceServer) error {
+func RegisterEchoServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux, server EchoServiceServer) (err error) {
+	ctx, finishRegistration, err := mux.BeginRegistration(ctx)
+	if err != nil {
+		return err
+	}
+	defer finishRegistration(&err)
 	mux.Handle(http.MethodPost, pattern_EchoService_Echo_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -788,6 +792,7 @@ func RegisterEchoServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux
 		}
 		forward_EchoService_Echo_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodGet, pattern_EchoService_Echo_1, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -808,6 +813,7 @@ func RegisterEchoServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux
 		}
 		forward_EchoService_Echo_1(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodGet, pattern_EchoService_Echo_2, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -828,6 +834,7 @@ func RegisterEchoServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux
 		}
 		forward_EchoService_Echo_2(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodGet, pattern_EchoService_Echo_3, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -848,6 +855,7 @@ func RegisterEchoServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux
 		}
 		forward_EchoService_Echo_3(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodGet, pattern_EchoService_Echo_4, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -868,6 +876,7 @@ func RegisterEchoServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux
 		}
 		forward_EchoService_Echo_4(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodGet, pattern_EchoService_Echo_5, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -888,6 +897,7 @@ func RegisterEchoServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux
 		}
 		forward_EchoService_Echo_5(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodGet, pattern_EchoService_Echo_6, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -908,6 +918,7 @@ func RegisterEchoServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux
 		}
 		forward_EchoService_Echo_6(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodPost, pattern_EchoService_EchoBody_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -928,6 +939,7 @@ func RegisterEchoServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux
 		}
 		forward_EchoService_EchoBody_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodPut, pattern_EchoService_EchoBody_1, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -948,6 +960,7 @@ func RegisterEchoServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux
 		}
 		forward_EchoService_EchoBody_1(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodDelete, pattern_EchoService_EchoDelete_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -968,6 +981,7 @@ func RegisterEchoServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux
 		}
 		forward_EchoService_EchoDelete_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodPatch, pattern_EchoService_EchoPatch_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -988,6 +1002,7 @@ func RegisterEchoServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux
 		}
 		forward_EchoService_EchoPatch_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodGet, pattern_EchoService_EchoUnauthorized_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -1008,6 +1023,7 @@ func RegisterEchoServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux
 		}
 		forward_EchoService_EchoUnauthorized_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodPost, pattern_EchoService_EchoStatus_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -1034,26 +1050,12 @@ func RegisterEchoServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux
 
 // RegisterEchoServiceHandlerFromEndpoint is same as RegisterEchoServiceHandler but
 // automatically dials to "endpoint" and closes the connection when "ctx" gets done.
-func RegisterEchoServiceHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) (err error) {
-	conn, err := grpc.NewClient(endpoint, opts...)
-	if err != nil {
-		return err
-	}
-	defer func() {
-		if err != nil {
-			if cerr := conn.Close(); cerr != nil {
-				grpclog.Errorf("Failed to close conn to %s: %v", endpoint, cerr)
-			}
-			return
-		}
-		go func() {
-			<-ctx.Done()
-			if cerr := conn.Close(); cerr != nil {
-				grpclog.Errorf("Failed to close conn to %s: %v", endpoint, cerr)
-			}
-		}()
-	}()
-	return RegisterEchoServiceHandler(ctx, mux, conn)
+// When the mux was configured with runtime.WithUpstreamConns, the connection is owned by
+// the gateway, shared per endpoint and dial options, and released on "ctx" cancellation.
+func RegisterEchoServiceHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) error {
+	return mux.RegisterFromEndpoint(ctx, endpoint, opts, func(ctx context.Context, conn *grpc.ClientConn) error {
+		return RegisterEchoServiceHandler(ctx, mux, conn)
+	})
 }
 
 // RegisterEchoServiceHandler registers the http handlers for service EchoService to "mux".
@@ -1067,7 +1069,12 @@ func RegisterEchoServiceHandler(ctx context.Context, mux *runtime.ServeMux, conn
 // Note: the gRPC framework executes interceptors within the gRPC handler. If the passed in "EchoServiceClient"
 // doesn't go through the normal gRPC flow (creating a gRPC client etc.) then it will be up to the passed in
 // "EchoServiceClient" to call the correct interceptors. This client ignores the HTTP middlewares.
-func RegisterEchoServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux, client EchoServiceClient) error {
+func RegisterEchoServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux, client EchoServiceClient) (err error) {
+	ctx, finishRegistration, err := mux.BeginRegistration(ctx)
+	if err != nil {
+		return err
+	}
+	defer finishRegistration(&err)
 	mux.Handle(http.MethodPost, pattern_EchoService_Echo_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()

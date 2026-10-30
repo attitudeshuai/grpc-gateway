@@ -95,7 +95,10 @@ func TestApplyTemplateHeader(t *testing.T) {
 	if want := "package example_pb\n"; !strings.Contains(got, want) {
 		t.Errorf("applyTemplate(%#v) = %s; want to contain %s", file, got, want)
 	}
-	if want := `grpclog.Errorf("Failed`; !strings.Contains(got, want) {
+	if want := `mux.RegisterFromEndpoint(ctx, endpoint, opts`; !strings.Contains(got, want) {
+		t.Errorf("applyTemplate(%#v) = %s; want to contain %s", file, got, want)
+	}
+	if want := `mux.BeginRegistration(ctx)`; !strings.Contains(got, want) {
 		t.Errorf("applyTemplate(%#v) = %s; want to contain %s", file, got, want)
 	}
 	if want := `mux.Handle(http.MethodGet,`; !strings.Contains(got, want) {
@@ -325,7 +328,7 @@ func TestApplyTemplateRequestWithoutClientStreaming(t *testing.T) {
 		if want := `annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/example.ExampleService/Echo", runtime.WithHTTPPathPattern("/v1"))`; !strings.Contains(got, want) {
 			t.Errorf("applyTemplate(%#v) = %s; want to contain %s", file, got, want)
 		}
-		if want := `grpclog.Errorf("Failed`; !strings.Contains(got, want) {
+		if want := `mux.RegisterFromEndpoint(ctx, endpoint, opts`; !strings.Contains(got, want) {
 			t.Errorf("applyTemplate(%#v) = %s; want to contain %s", file, got, want)
 		}
 		if want := `mux.Handle(http.MethodPost,`; !strings.Contains(got, want) {
@@ -833,10 +836,10 @@ func TestApplyTemplateInProcess(t *testing.T) {
 			}
 		}
 
-		if want := `func RegisterExampleServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux, server ExampleServiceServer) error {`; !strings.Contains(got, want) {
+		if want := `func RegisterExampleServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux, server ExampleServiceServer) (err error) {`; !strings.Contains(got, want) {
 			t.Errorf("applyTemplate(%#v) = %s; want to contain %s", file, got, want)
 		}
-		if want := `grpclog.Errorf("Failed`; !strings.Contains(got, want) {
+		if want := `mux.BeginRegistration(ctx)`; !strings.Contains(got, want) {
 			t.Errorf("applyTemplate(%#v) = %s; want to contain %s", file, got, want)
 		}
 		if want := `mux.Handle(http.MethodPost,`; !strings.Contains(got, want) {
@@ -927,7 +930,7 @@ func TestAllowPatchFeature(t *testing.T) {
 				t.Errorf("applyTemplate(%#v) = %s; want to _not_ contain %s", file, got, want)
 			}
 		}
-		if want := `grpclog.Errorf("Failed`; !strings.Contains(got, want) {
+		if want := `mux.RegisterFromEndpoint(ctx, endpoint, opts`; !strings.Contains(got, want) {
 			t.Errorf("applyTemplate(%#v) = %s; want to contain %s", file, got, want)
 		}
 		if want := `mux.Handle(http.MethodPatch,`; !strings.Contains(got, want) {
@@ -1031,7 +1034,7 @@ func TestIdentifierCapitalization(t *testing.T) {
 		protoReq ExampleResponse`; !strings.Contains(got, want) {
 		t.Errorf("applyTemplate(%#v) = %s; want to contain %s", file, got, want)
 	}
-	if want := `grpclog.Errorf("Failed`; !strings.Contains(got, want) {
+	if want := `mux.RegisterFromEndpoint(ctx, endpoint, opts`; !strings.Contains(got, want) {
 		t.Errorf("applyTemplate(%#v) = %s; want to contain %s", file, got, want)
 	}
 	if want := `mux.Handle(http.MethodGet,`; !strings.Contains(got, want) {

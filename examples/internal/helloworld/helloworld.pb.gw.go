@@ -18,7 +18,6 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/v2/utilities"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/grpclog"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/proto"
@@ -570,7 +569,12 @@ func local_request_Greeter_SayHello_9(ctx context.Context, marshaler runtime.Mar
 // StreamingRPC :currently unsupported pending https://github.com/grpc/grpc-go/issues/906.
 // Note that using this registration option will cause many gRPC library features to stop working. Consider using RegisterGreeterHandlerFromEndpoint instead.
 // GRPC interceptors will not work for this type of registration. To use interceptors, you must use the "runtime.WithMiddlewares" option in the "runtime.NewServeMux" call.
-func RegisterGreeterHandlerServer(ctx context.Context, mux *runtime.ServeMux, server GreeterServer) error {
+func RegisterGreeterHandlerServer(ctx context.Context, mux *runtime.ServeMux, server GreeterServer) (err error) {
+	ctx, finishRegistration, err := mux.BeginRegistration(ctx)
+	if err != nil {
+		return err
+	}
+	defer finishRegistration(&err)
 	mux.Handle(http.MethodGet, pattern_Greeter_SayHello_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -591,6 +595,7 @@ func RegisterGreeterHandlerServer(ctx context.Context, mux *runtime.ServeMux, se
 		}
 		forward_Greeter_SayHello_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodGet, pattern_Greeter_SayHello_1, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -611,6 +616,7 @@ func RegisterGreeterHandlerServer(ctx context.Context, mux *runtime.ServeMux, se
 		}
 		forward_Greeter_SayHello_1(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodGet, pattern_Greeter_SayHello_2, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -631,6 +637,7 @@ func RegisterGreeterHandlerServer(ctx context.Context, mux *runtime.ServeMux, se
 		}
 		forward_Greeter_SayHello_2(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodGet, pattern_Greeter_SayHello_3, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -651,6 +658,7 @@ func RegisterGreeterHandlerServer(ctx context.Context, mux *runtime.ServeMux, se
 		}
 		forward_Greeter_SayHello_3(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodGet, pattern_Greeter_SayHello_4, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -671,6 +679,7 @@ func RegisterGreeterHandlerServer(ctx context.Context, mux *runtime.ServeMux, se
 		}
 		forward_Greeter_SayHello_4(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodGet, pattern_Greeter_SayHello_5, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -691,6 +700,7 @@ func RegisterGreeterHandlerServer(ctx context.Context, mux *runtime.ServeMux, se
 		}
 		forward_Greeter_SayHello_5(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodGet, pattern_Greeter_SayHello_6, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -711,6 +721,7 @@ func RegisterGreeterHandlerServer(ctx context.Context, mux *runtime.ServeMux, se
 		}
 		forward_Greeter_SayHello_6(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodGet, pattern_Greeter_SayHello_7, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -731,6 +742,7 @@ func RegisterGreeterHandlerServer(ctx context.Context, mux *runtime.ServeMux, se
 		}
 		forward_Greeter_SayHello_7(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodGet, pattern_Greeter_SayHello_8, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -751,6 +763,7 @@ func RegisterGreeterHandlerServer(ctx context.Context, mux *runtime.ServeMux, se
 		}
 		forward_Greeter_SayHello_8(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodGet, pattern_Greeter_SayHello_9, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -777,26 +790,12 @@ func RegisterGreeterHandlerServer(ctx context.Context, mux *runtime.ServeMux, se
 
 // RegisterGreeterHandlerFromEndpoint is same as RegisterGreeterHandler but
 // automatically dials to "endpoint" and closes the connection when "ctx" gets done.
-func RegisterGreeterHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) (err error) {
-	conn, err := grpc.NewClient(endpoint, opts...)
-	if err != nil {
-		return err
-	}
-	defer func() {
-		if err != nil {
-			if cerr := conn.Close(); cerr != nil {
-				grpclog.Errorf("Failed to close conn to %s: %v", endpoint, cerr)
-			}
-			return
-		}
-		go func() {
-			<-ctx.Done()
-			if cerr := conn.Close(); cerr != nil {
-				grpclog.Errorf("Failed to close conn to %s: %v", endpoint, cerr)
-			}
-		}()
-	}()
-	return RegisterGreeterHandler(ctx, mux, conn)
+// When the mux was configured with runtime.WithUpstreamConns, the connection is owned by
+// the gateway, shared per endpoint and dial options, and released on "ctx" cancellation.
+func RegisterGreeterHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) error {
+	return mux.RegisterFromEndpoint(ctx, endpoint, opts, func(ctx context.Context, conn *grpc.ClientConn) error {
+		return RegisterGreeterHandler(ctx, mux, conn)
+	})
 }
 
 // RegisterGreeterHandler registers the http handlers for service Greeter to "mux".
@@ -810,7 +809,12 @@ func RegisterGreeterHandler(ctx context.Context, mux *runtime.ServeMux, conn *gr
 // Note: the gRPC framework executes interceptors within the gRPC handler. If the passed in "GreeterClient"
 // doesn't go through the normal gRPC flow (creating a gRPC client etc.) then it will be up to the passed in
 // "GreeterClient" to call the correct interceptors. This client ignores the HTTP middlewares.
-func RegisterGreeterHandlerClient(ctx context.Context, mux *runtime.ServeMux, client GreeterClient) error {
+func RegisterGreeterHandlerClient(ctx context.Context, mux *runtime.ServeMux, client GreeterClient) (err error) {
+	ctx, finishRegistration, err := mux.BeginRegistration(ctx)
+	if err != nil {
+		return err
+	}
+	defer finishRegistration(&err)
 	mux.Handle(http.MethodGet, pattern_Greeter_SayHello_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()

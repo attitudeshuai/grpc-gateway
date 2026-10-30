@@ -18,7 +18,6 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/v2/utilities"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/grpclog"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/proto"
@@ -67,7 +66,12 @@ func local_request_EnumWithSingleValueService_Echo_0(ctx context.Context, marsha
 // StreamingRPC :currently unsupported pending https://github.com/grpc/grpc-go/issues/906.
 // Note that using this registration option will cause many gRPC library features to stop working. Consider using RegisterEnumWithSingleValueServiceHandlerFromEndpoint instead.
 // GRPC interceptors will not work for this type of registration. To use interceptors, you must use the "runtime.WithMiddlewares" option in the "runtime.NewServeMux" call.
-func RegisterEnumWithSingleValueServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux, server EnumWithSingleValueServiceServer) error {
+func RegisterEnumWithSingleValueServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux, server EnumWithSingleValueServiceServer) (err error) {
+	ctx, finishRegistration, err := mux.BeginRegistration(ctx)
+	if err != nil {
+		return err
+	}
+	defer finishRegistration(&err)
 	mux.Handle(http.MethodPost, pattern_EnumWithSingleValueService_Echo_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -94,26 +98,12 @@ func RegisterEnumWithSingleValueServiceHandlerServer(ctx context.Context, mux *r
 
 // RegisterEnumWithSingleValueServiceHandlerFromEndpoint is same as RegisterEnumWithSingleValueServiceHandler but
 // automatically dials to "endpoint" and closes the connection when "ctx" gets done.
-func RegisterEnumWithSingleValueServiceHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) (err error) {
-	conn, err := grpc.NewClient(endpoint, opts...)
-	if err != nil {
-		return err
-	}
-	defer func() {
-		if err != nil {
-			if cerr := conn.Close(); cerr != nil {
-				grpclog.Errorf("Failed to close conn to %s: %v", endpoint, cerr)
-			}
-			return
-		}
-		go func() {
-			<-ctx.Done()
-			if cerr := conn.Close(); cerr != nil {
-				grpclog.Errorf("Failed to close conn to %s: %v", endpoint, cerr)
-			}
-		}()
-	}()
-	return RegisterEnumWithSingleValueServiceHandler(ctx, mux, conn)
+// When the mux was configured with runtime.WithUpstreamConns, the connection is owned by
+// the gateway, shared per endpoint and dial options, and released on "ctx" cancellation.
+func RegisterEnumWithSingleValueServiceHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) error {
+	return mux.RegisterFromEndpoint(ctx, endpoint, opts, func(ctx context.Context, conn *grpc.ClientConn) error {
+		return RegisterEnumWithSingleValueServiceHandler(ctx, mux, conn)
+	})
 }
 
 // RegisterEnumWithSingleValueServiceHandler registers the http handlers for service EnumWithSingleValueService to "mux".
@@ -127,7 +117,12 @@ func RegisterEnumWithSingleValueServiceHandler(ctx context.Context, mux *runtime
 // Note: the gRPC framework executes interceptors within the gRPC handler. If the passed in "EnumWithSingleValueServiceClient"
 // doesn't go through the normal gRPC flow (creating a gRPC client etc.) then it will be up to the passed in
 // "EnumWithSingleValueServiceClient" to call the correct interceptors. This client ignores the HTTP middlewares.
-func RegisterEnumWithSingleValueServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux, client EnumWithSingleValueServiceClient) error {
+func RegisterEnumWithSingleValueServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux, client EnumWithSingleValueServiceClient) (err error) {
+	ctx, finishRegistration, err := mux.BeginRegistration(ctx)
+	if err != nil {
+		return err
+	}
+	defer finishRegistration(&err)
 	mux.Handle(http.MethodPost, pattern_EnumWithSingleValueService_Echo_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()

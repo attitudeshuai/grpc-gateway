@@ -18,7 +18,6 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/v2/utilities"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/grpclog"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/proto"
@@ -75,7 +74,12 @@ func local_request_Proto3FieldSemanticsService_GetFilter_0(ctx context.Context, 
 // StreamingRPC :currently unsupported pending https://github.com/grpc/grpc-go/issues/906.
 // Note that using this registration option will cause many gRPC library features to stop working. Consider using RegisterProto3FieldSemanticsServiceHandlerFromEndpoint instead.
 // GRPC interceptors will not work for this type of registration. To use interceptors, you must use the "runtime.WithMiddlewares" option in the "runtime.NewServeMux" call.
-func RegisterProto3FieldSemanticsServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux, server Proto3FieldSemanticsServiceServer) error {
+func RegisterProto3FieldSemanticsServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux, server Proto3FieldSemanticsServiceServer) (err error) {
+	ctx, finishRegistration, err := mux.BeginRegistration(ctx)
+	if err != nil {
+		return err
+	}
+	defer finishRegistration(&err)
 	mux.Handle(http.MethodGet, pattern_Proto3FieldSemanticsService_GetFilter_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -102,26 +106,12 @@ func RegisterProto3FieldSemanticsServiceHandlerServer(ctx context.Context, mux *
 
 // RegisterProto3FieldSemanticsServiceHandlerFromEndpoint is same as RegisterProto3FieldSemanticsServiceHandler but
 // automatically dials to "endpoint" and closes the connection when "ctx" gets done.
-func RegisterProto3FieldSemanticsServiceHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) (err error) {
-	conn, err := grpc.NewClient(endpoint, opts...)
-	if err != nil {
-		return err
-	}
-	defer func() {
-		if err != nil {
-			if cerr := conn.Close(); cerr != nil {
-				grpclog.Errorf("Failed to close conn to %s: %v", endpoint, cerr)
-			}
-			return
-		}
-		go func() {
-			<-ctx.Done()
-			if cerr := conn.Close(); cerr != nil {
-				grpclog.Errorf("Failed to close conn to %s: %v", endpoint, cerr)
-			}
-		}()
-	}()
-	return RegisterProto3FieldSemanticsServiceHandler(ctx, mux, conn)
+// When the mux was configured with runtime.WithUpstreamConns, the connection is owned by
+// the gateway, shared per endpoint and dial options, and released on "ctx" cancellation.
+func RegisterProto3FieldSemanticsServiceHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) error {
+	return mux.RegisterFromEndpoint(ctx, endpoint, opts, func(ctx context.Context, conn *grpc.ClientConn) error {
+		return RegisterProto3FieldSemanticsServiceHandler(ctx, mux, conn)
+	})
 }
 
 // RegisterProto3FieldSemanticsServiceHandler registers the http handlers for service Proto3FieldSemanticsService to "mux".
@@ -135,7 +125,12 @@ func RegisterProto3FieldSemanticsServiceHandler(ctx context.Context, mux *runtim
 // Note: the gRPC framework executes interceptors within the gRPC handler. If the passed in "Proto3FieldSemanticsServiceClient"
 // doesn't go through the normal gRPC flow (creating a gRPC client etc.) then it will be up to the passed in
 // "Proto3FieldSemanticsServiceClient" to call the correct interceptors. This client ignores the HTTP middlewares.
-func RegisterProto3FieldSemanticsServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux, client Proto3FieldSemanticsServiceClient) error {
+func RegisterProto3FieldSemanticsServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux, client Proto3FieldSemanticsServiceClient) (err error) {
+	ctx, finishRegistration, err := mux.BeginRegistration(ctx)
+	if err != nil {
+		return err
+	}
+	defer finishRegistration(&err)
 	mux.Handle(http.MethodGet, pattern_Proto3FieldSemanticsService_GetFilter_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()

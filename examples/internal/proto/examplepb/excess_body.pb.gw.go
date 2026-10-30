@@ -18,7 +18,6 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/v2/utilities"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/grpclog"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/proto"
@@ -132,7 +131,12 @@ func request_ExcessBodyService_WithBodyServerStream_0(ctx context.Context, marsh
 // StreamingRPC :currently unsupported pending https://github.com/grpc/grpc-go/issues/906.
 // Note that using this registration option will cause many gRPC library features to stop working. Consider using RegisterExcessBodyServiceHandlerFromEndpoint instead.
 // GRPC interceptors will not work for this type of registration. To use interceptors, you must use the "runtime.WithMiddlewares" option in the "runtime.NewServeMux" call.
-func RegisterExcessBodyServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux, server ExcessBodyServiceServer) error {
+func RegisterExcessBodyServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux, server ExcessBodyServiceServer) (err error) {
+	ctx, finishRegistration, err := mux.BeginRegistration(ctx)
+	if err != nil {
+		return err
+	}
+	defer finishRegistration(&err)
 	mux.Handle(http.MethodPost, pattern_ExcessBodyService_NoBodyRpc_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -160,6 +164,7 @@ func RegisterExcessBodyServiceHandlerServer(ctx context.Context, mux *runtime.Se
 		runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 		return
 	})
+
 	mux.Handle(http.MethodPost, pattern_ExcessBodyService_WithBodyRpc_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -193,26 +198,12 @@ func RegisterExcessBodyServiceHandlerServer(ctx context.Context, mux *runtime.Se
 
 // RegisterExcessBodyServiceHandlerFromEndpoint is same as RegisterExcessBodyServiceHandler but
 // automatically dials to "endpoint" and closes the connection when "ctx" gets done.
-func RegisterExcessBodyServiceHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) (err error) {
-	conn, err := grpc.NewClient(endpoint, opts...)
-	if err != nil {
-		return err
-	}
-	defer func() {
-		if err != nil {
-			if cerr := conn.Close(); cerr != nil {
-				grpclog.Errorf("Failed to close conn to %s: %v", endpoint, cerr)
-			}
-			return
-		}
-		go func() {
-			<-ctx.Done()
-			if cerr := conn.Close(); cerr != nil {
-				grpclog.Errorf("Failed to close conn to %s: %v", endpoint, cerr)
-			}
-		}()
-	}()
-	return RegisterExcessBodyServiceHandler(ctx, mux, conn)
+// When the mux was configured with runtime.WithUpstreamConns, the connection is owned by
+// the gateway, shared per endpoint and dial options, and released on "ctx" cancellation.
+func RegisterExcessBodyServiceHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) error {
+	return mux.RegisterFromEndpoint(ctx, endpoint, opts, func(ctx context.Context, conn *grpc.ClientConn) error {
+		return RegisterExcessBodyServiceHandler(ctx, mux, conn)
+	})
 }
 
 // RegisterExcessBodyServiceHandler registers the http handlers for service ExcessBodyService to "mux".
@@ -226,7 +217,12 @@ func RegisterExcessBodyServiceHandler(ctx context.Context, mux *runtime.ServeMux
 // Note: the gRPC framework executes interceptors within the gRPC handler. If the passed in "ExcessBodyServiceClient"
 // doesn't go through the normal gRPC flow (creating a gRPC client etc.) then it will be up to the passed in
 // "ExcessBodyServiceClient" to call the correct interceptors. This client ignores the HTTP middlewares.
-func RegisterExcessBodyServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux, client ExcessBodyServiceClient) error {
+func RegisterExcessBodyServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux, client ExcessBodyServiceClient) (err error) {
+	ctx, finishRegistration, err := mux.BeginRegistration(ctx)
+	if err != nil {
+		return err
+	}
+	defer finishRegistration(&err)
 	mux.Handle(http.MethodPost, pattern_ExcessBodyService_NoBodyRpc_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()

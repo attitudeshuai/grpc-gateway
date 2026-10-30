@@ -18,7 +18,6 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/v2/utilities"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/grpclog"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/proto"
@@ -251,7 +250,12 @@ func local_request_VisibilityRuleInternalEchoService_Echo_0(ctx context.Context,
 // StreamingRPC :currently unsupported pending https://github.com/grpc/grpc-go/issues/906.
 // Note that using this registration option will cause many gRPC library features to stop working. Consider using RegisterVisibilityRuleEchoServiceHandlerFromEndpoint instead.
 // GRPC interceptors will not work for this type of registration. To use interceptors, you must use the "runtime.WithMiddlewares" option in the "runtime.NewServeMux" call.
-func RegisterVisibilityRuleEchoServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux, server VisibilityRuleEchoServiceServer) error {
+func RegisterVisibilityRuleEchoServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux, server VisibilityRuleEchoServiceServer) (err error) {
+	ctx, finishRegistration, err := mux.BeginRegistration(ctx)
+	if err != nil {
+		return err
+	}
+	defer finishRegistration(&err)
 	mux.Handle(http.MethodPost, pattern_VisibilityRuleEchoService_Echo_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -272,6 +276,7 @@ func RegisterVisibilityRuleEchoServiceHandlerServer(ctx context.Context, mux *ru
 		}
 		forward_VisibilityRuleEchoService_Echo_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodGet, pattern_VisibilityRuleEchoService_EchoInternal_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -292,6 +297,7 @@ func RegisterVisibilityRuleEchoServiceHandlerServer(ctx context.Context, mux *ru
 		}
 		forward_VisibilityRuleEchoService_EchoInternal_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodGet, pattern_VisibilityRuleEchoService_EchoPreview_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -312,6 +318,7 @@ func RegisterVisibilityRuleEchoServiceHandlerServer(ctx context.Context, mux *ru
 		}
 		forward_VisibilityRuleEchoService_EchoPreview_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+
 	mux.Handle(http.MethodGet, pattern_VisibilityRuleEchoService_EchoInternalAndPreview_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -341,7 +348,12 @@ func RegisterVisibilityRuleEchoServiceHandlerServer(ctx context.Context, mux *ru
 // StreamingRPC :currently unsupported pending https://github.com/grpc/grpc-go/issues/906.
 // Note that using this registration option will cause many gRPC library features to stop working. Consider using RegisterVisibilityRuleInternalEchoServiceHandlerFromEndpoint instead.
 // GRPC interceptors will not work for this type of registration. To use interceptors, you must use the "runtime.WithMiddlewares" option in the "runtime.NewServeMux" call.
-func RegisterVisibilityRuleInternalEchoServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux, server VisibilityRuleInternalEchoServiceServer) error {
+func RegisterVisibilityRuleInternalEchoServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux, server VisibilityRuleInternalEchoServiceServer) (err error) {
+	ctx, finishRegistration, err := mux.BeginRegistration(ctx)
+	if err != nil {
+		return err
+	}
+	defer finishRegistration(&err)
 	mux.Handle(http.MethodPost, pattern_VisibilityRuleInternalEchoService_Echo_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -368,26 +380,12 @@ func RegisterVisibilityRuleInternalEchoServiceHandlerServer(ctx context.Context,
 
 // RegisterVisibilityRuleEchoServiceHandlerFromEndpoint is same as RegisterVisibilityRuleEchoServiceHandler but
 // automatically dials to "endpoint" and closes the connection when "ctx" gets done.
-func RegisterVisibilityRuleEchoServiceHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) (err error) {
-	conn, err := grpc.NewClient(endpoint, opts...)
-	if err != nil {
-		return err
-	}
-	defer func() {
-		if err != nil {
-			if cerr := conn.Close(); cerr != nil {
-				grpclog.Errorf("Failed to close conn to %s: %v", endpoint, cerr)
-			}
-			return
-		}
-		go func() {
-			<-ctx.Done()
-			if cerr := conn.Close(); cerr != nil {
-				grpclog.Errorf("Failed to close conn to %s: %v", endpoint, cerr)
-			}
-		}()
-	}()
-	return RegisterVisibilityRuleEchoServiceHandler(ctx, mux, conn)
+// When the mux was configured with runtime.WithUpstreamConns, the connection is owned by
+// the gateway, shared per endpoint and dial options, and released on "ctx" cancellation.
+func RegisterVisibilityRuleEchoServiceHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) error {
+	return mux.RegisterFromEndpoint(ctx, endpoint, opts, func(ctx context.Context, conn *grpc.ClientConn) error {
+		return RegisterVisibilityRuleEchoServiceHandler(ctx, mux, conn)
+	})
 }
 
 // RegisterVisibilityRuleEchoServiceHandler registers the http handlers for service VisibilityRuleEchoService to "mux".
@@ -401,7 +399,12 @@ func RegisterVisibilityRuleEchoServiceHandler(ctx context.Context, mux *runtime.
 // Note: the gRPC framework executes interceptors within the gRPC handler. If the passed in "VisibilityRuleEchoServiceClient"
 // doesn't go through the normal gRPC flow (creating a gRPC client etc.) then it will be up to the passed in
 // "VisibilityRuleEchoServiceClient" to call the correct interceptors. This client ignores the HTTP middlewares.
-func RegisterVisibilityRuleEchoServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux, client VisibilityRuleEchoServiceClient) error {
+func RegisterVisibilityRuleEchoServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux, client VisibilityRuleEchoServiceClient) (err error) {
+	ctx, finishRegistration, err := mux.BeginRegistration(ctx)
+	if err != nil {
+		return err
+	}
+	defer finishRegistration(&err)
 	mux.Handle(http.MethodPost, pattern_VisibilityRuleEchoService_Echo_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -489,26 +492,12 @@ var (
 
 // RegisterVisibilityRuleInternalEchoServiceHandlerFromEndpoint is same as RegisterVisibilityRuleInternalEchoServiceHandler but
 // automatically dials to "endpoint" and closes the connection when "ctx" gets done.
-func RegisterVisibilityRuleInternalEchoServiceHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) (err error) {
-	conn, err := grpc.NewClient(endpoint, opts...)
-	if err != nil {
-		return err
-	}
-	defer func() {
-		if err != nil {
-			if cerr := conn.Close(); cerr != nil {
-				grpclog.Errorf("Failed to close conn to %s: %v", endpoint, cerr)
-			}
-			return
-		}
-		go func() {
-			<-ctx.Done()
-			if cerr := conn.Close(); cerr != nil {
-				grpclog.Errorf("Failed to close conn to %s: %v", endpoint, cerr)
-			}
-		}()
-	}()
-	return RegisterVisibilityRuleInternalEchoServiceHandler(ctx, mux, conn)
+// When the mux was configured with runtime.WithUpstreamConns, the connection is owned by
+// the gateway, shared per endpoint and dial options, and released on "ctx" cancellation.
+func RegisterVisibilityRuleInternalEchoServiceHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) error {
+	return mux.RegisterFromEndpoint(ctx, endpoint, opts, func(ctx context.Context, conn *grpc.ClientConn) error {
+		return RegisterVisibilityRuleInternalEchoServiceHandler(ctx, mux, conn)
+	})
 }
 
 // RegisterVisibilityRuleInternalEchoServiceHandler registers the http handlers for service VisibilityRuleInternalEchoService to "mux".
@@ -522,7 +511,12 @@ func RegisterVisibilityRuleInternalEchoServiceHandler(ctx context.Context, mux *
 // Note: the gRPC framework executes interceptors within the gRPC handler. If the passed in "VisibilityRuleInternalEchoServiceClient"
 // doesn't go through the normal gRPC flow (creating a gRPC client etc.) then it will be up to the passed in
 // "VisibilityRuleInternalEchoServiceClient" to call the correct interceptors. This client ignores the HTTP middlewares.
-func RegisterVisibilityRuleInternalEchoServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux, client VisibilityRuleInternalEchoServiceClient) error {
+func RegisterVisibilityRuleInternalEchoServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux, client VisibilityRuleInternalEchoServiceClient) (err error) {
+	ctx, finishRegistration, err := mux.BeginRegistration(ctx)
+	if err != nil {
+		return err
+	}
+	defer finishRegistration(&err)
 	mux.Handle(http.MethodPost, pattern_VisibilityRuleInternalEchoService_Echo_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
