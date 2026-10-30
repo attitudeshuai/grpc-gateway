@@ -168,7 +168,7 @@ func annotateContext(ctx context.Context, mux *ServeMux, req *http.Request, rpcM
 		}
 
 		for _, val := range vals {
-			if h, ok := mux.incomingHeaderMatcher(key); ok {
+			if h, ok := mux.cfg.incomingHeaderMatcher(key); ok {
 				// The gateway derives x-forwarded-host and x-forwarded-for below from
 				// the trusted request (Host / X-Forwarded-* / RemoteAddr), and backends
 				// rely on those metadata keys for client host/IP decisions. Refuse a

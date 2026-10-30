@@ -5,6 +5,7 @@ import (
 	"errors"
 	"io"
 	"net/http"
+	"strconv"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/grpclog"
@@ -78,12 +79,12 @@ func HTTPStatusFromCode(code codes.Code) int {
 
 // HTTPError uses the mux-configured error handler.
 func HTTPError(ctx context.Context, mux *ServeMux, marshaler Marshaler, w http.ResponseWriter, r *http.Request, err error) {
-	mux.errorHandler(ctx, mux, marshaler, w, r, err)
+	mux.cfg.errorHandler(ctx, mux, marshaler, w, r, err)
 }
 
 // HTTPStreamError uses the mux-configured stream error handler to notify error to the client without closing the connection.
 func HTTPStreamError(ctx context.Context, mux *ServeMux, marshaler Marshaler, w http.ResponseWriter, r *http.Request, err error) {
-	st := mux.streamErrorHandler(ctx, err)
+	st := mux.cfg.streamErrorHandler(ctx, err)
 	msg := errorChunk(st)
 	buf, err := marshaler.Marshal(msg)
 	if err != nil {
@@ -120,9 +121,17 @@ func DefaultHTTPErrorHandler(ctx context.Context, mux *ServeMux, marshaler Marsh
 	w.Header().Del("Trailer")
 	w.Header().Del("Transfer-Encoding")
 
-	respRw, err := mux.forwardResponseRewriter(ctx, s.Proto())
+	// Extracting the trailer fact up front lets every exit below apply the
+	// same construction-time framing policy as the unary path.
+	md, ok := ServerMetadataFromContext(ctx)
+	forwardsTrailers := ok && requestAcceptsTrailers(r)
+
+	respRw, err := mux.cfg.forwardResponseRewriter(ctx, s.Proto())
 	if err != nil {
 		grpclog.Errorf("Failed to rewrite error message %q: %v", s, err)
+		if mux.cfg.writeContentLengthHeader(false, forwardsTrailers) {
+			w.Header().Set("Content-Length", strconv.Itoa(len(fallbackRewriter)))
+		}
 		w.WriteHeader(http.StatusInternalServerError)
 		if _, err := io.WriteString(w, fallbackRewriter); err != nil {
 			grpclog.Errorf("Failed to write response: %v", err)
@@ -140,6 +149,9 @@ func DefaultHTTPErrorHandler(ctx context.Context, mux *ServeMux, marshaler Marsh
 	buf, merr := marshaler.Marshal(respRw)
 	if merr != nil {
 		grpclog.Errorf("Failed to marshal error message %q: %v", s, merr)
+		if mux.cfg.writeContentLengthHeader(false, forwardsTrailers) {
+			w.Header().Set("Content-Length", strconv.Itoa(len(fallback)))
+		}
 		w.WriteHeader(http.StatusInternalServerError)
 		if _, err := io.WriteString(w, fallback); err != nil {
 			grpclog.Errorf("Failed to write response: %v", err)
@@ -147,7 +159,6 @@ func DefaultHTTPErrorHandler(ctx context.Context, mux *ServeMux, marshaler Marsh
 		return
 	}
 
-	md, ok := ServerMetadataFromContext(ctx)
 	if ok {
 		handleForwardResponseServerMetadata(w, mux, md)
 
@@ -156,11 +167,13 @@ func DefaultHTTPErrorHandler(ctx context.Context, mux *ServeMux, marshaler Marsh
 		// is acceptable, as described in Section 4.3, a server SHOULD NOT
 		// generate trailer fields that it believes are necessary for the user
 		// agent to receive.
-		doForwardTrailers := requestAcceptsTrailers(r)
-
-		if doForwardTrailers {
+		if forwardsTrailers {
 			handleForwardResponseTrailerHeader(w, mux, md)
-			w.Header().Set("Transfer-Encoding", "chunked")
+			// WithDisableChunkedEncoding takes priority: the error path never
+			// writes the chunk marker once chunked encoding is disabled.
+			if mux.cfg.writeChunkMarker(false, true) {
+				w.Header().Set("Transfer-Encoding", "chunked")
+			}
 		}
 	}
 
@@ -169,12 +182,18 @@ func DefaultHTTPErrorHandler(ctx context.Context, mux *ServeMux, marshaler Marsh
 		st = customStatus.HTTPStatus
 	}
 
+	// Buffered error responses get Content-Length under the same rule as
+	// unary responses, and never when they carry trailers.
+	if mux.cfg.writeContentLengthHeader(false, forwardsTrailers) {
+		w.Header().Set("Content-Length", strconv.Itoa(len(buf)))
+	}
+
 	w.WriteHeader(st)
 	if _, err := w.Write(buf); err != nil {
 		grpclog.Errorf("Failed to write response: %v", err)
 	}
 
-	if ok && requestAcceptsTrailers(r) {
+	if forwardsTrailers {
 		handleForwardResponseTrailer(w, mux, md)
 	}
 }
@@ -200,5 +219,5 @@ func DefaultRoutingErrorHandler(ctx context.Context, mux *ServeMux, marshaler Ma
 	case http.StatusNotFound:
 		sterr = status.Error(codes.NotFound, http.StatusText(httpStatus))
 	}
-	mux.errorHandler(ctx, mux, marshaler, w, r, sterr)
+	mux.cfg.errorHandler(ctx, mux, marshaler, w, r, sterr)
 }

@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"mime"
 	"net/http"
 	"net/textproto"
 	"regexp"
@@ -61,24 +60,26 @@ type Middleware func(HandlerFunc) HandlerFunc
 // It matches http requests to patterns and invokes the corresponding handler.
 type ServeMux struct {
 	// handlers maps HTTP method to a list of handlers.
-	handlers                  map[string][]handler
-	middlewares               []Middleware
-	forwardResponseOptions    []func(context.Context, http.ResponseWriter, proto.Message) error
-	forwardResponseRewriter   ForwardResponseRewriter
-	marshalers                marshalerRegistry
-	incomingHeaderMatcher     HeaderMatcherFunc
-	outgoingHeaderMatcher     HeaderMatcherFunc
-	outgoingTrailerMatcher    HeaderMatcherFunc
-	metadataAnnotators        []func(context.Context, *http.Request) metadata.MD
-	errorHandler              ErrorHandlerFunc
-	streamErrorHandler        StreamErrorHandlerFunc
-	routingErrorHandler       RoutingErrorHandlerFunc
-	disablePathLengthFallback bool
-	disableHTTPMethodOverride bool
-	unescapingMode            UnescapingMode
-	writeContentLength        bool
-	disableChunkedEncoding    bool
-	strictDeepWildcard        bool
+	handlers               map[string][]handler
+	middlewares            []Middleware
+	forwardResponseOptions []func(context.Context, http.ResponseWriter, proto.Message) error
+	marshalers             marshalerRegistry
+	metadataAnnotators     []func(context.Context, *http.Request) metadata.MD
+
+	// cfg is the resolved, immutable snapshot of every ServeMux switch. It is
+	// populated while NewServeMux runs and only read afterwards, so all
+	// concurrent requests share this one pointer.
+	cfg *muxConfig
+
+	// declared exists only while NewServeMux is applying options and tracks
+	// the single-valued options already seen, so that contradictory
+	// declarations can be rejected before the ServeMux is returned.
+	declared map[muxOptionSlot]string
+	frozen   bool
+
+	// queryParser is applied to the package-global parser only at freeze
+	// time, so a failed construction cannot leave the global mutated.
+	queryParser QueryParameterParser
 }
 
 // ServeMuxOption is an option that can be given to a ServeMux on construction.
@@ -98,7 +99,12 @@ type ForwardResponseRewriter func(ctx context.Context, response proto.Message) (
 // Since this option involves making runtime changes to the response shape or type.
 func WithForwardResponseRewriter(fwdResponseRewriter ForwardResponseRewriter) ServeMuxOption {
 	return func(sm *ServeMux) {
-		sm.forwardResponseRewriter = fwdResponseRewriter
+		if fwdResponseRewriter == nil {
+			return
+		}
+		sm.declareScalar(slotForwardResponseRewriter, "WithForwardResponseRewriter", func() {
+			sm.cfg.forwardResponseRewriter = fwdResponseRewriter
+		})
 	}
 }
 
@@ -110,34 +116,55 @@ func WithForwardResponseRewriter(fwdResponseRewriter ForwardResponseRewriter) Se
 // The message may be nil in the case where just a header is being sent.
 func WithForwardResponseOption(forwardResponseOption func(context.Context, http.ResponseWriter, proto.Message) error) ServeMuxOption {
 	return func(serveMux *ServeMux) {
-		serveMux.forwardResponseOptions = append(serveMux.forwardResponseOptions, forwardResponseOption)
+		serveMux.mutate("WithForwardResponseOption", func() {
+			serveMux.forwardResponseOptions = append(serveMux.forwardResponseOptions, forwardResponseOption)
+		})
 	}
 }
 
 // WithUnescapingMode sets the escaping type. See the definitions of UnescapingMode
 // for more information.
+//
+// The mode is a single-valued option: declaring it twice with different
+// values makes NewServeMux panic and names the two conflicting options.
 func WithUnescapingMode(mode UnescapingMode) ServeMuxOption {
 	return func(serveMux *ServeMux) {
-		serveMux.unescapingMode = mode
+		serveMux.setUnescapingMode(mode)
 	}
 }
 
 // WithMiddlewares sets server middleware for all handlers. This is useful as an alternative to gRPC
 // interceptors when using the direct-to-implementation registration methods and cannot rely
 // on gRPC interceptors. It's recommended to use gRPC interceptors instead if possible.
+//
+// Middlewares are list options: repeated declarations keep append semantics
+// and run in declaration order.
 func WithMiddlewares(middlewares ...Middleware) ServeMuxOption {
 	return func(serveMux *ServeMux) {
-		serveMux.middlewares = append(serveMux.middlewares, middlewares...)
+		serveMux.mutate("WithMiddlewares", func() {
+			serveMux.middlewares = append(serveMux.middlewares, middlewares...)
+		})
 	}
 }
 
-// WithDisableChunkedEncoding disables the Transfer-Encoding: chunked header
-// for streaming responses. This is useful for streaming implementations that use
-// Content-Length, which is mutually exclusive with Transfer-Encoding:chunked.
-// Note that this option will not automatically add Content-Length headers, so it should be used with caution.
+// WithDisableChunkedEncoding disables the Transfer-Encoding: chunked header on
+// every response path: server-streaming responses no longer write it, and
+// buffered (unary or error) responses that forward trailers do not write it
+// either. It therefore takes priority over trailer forwarding; without chunked
+// framing, HTTP/1.1 trailers cannot be transmitted, but no chunk marker is
+// ever emitted.
+//
+// This is useful for deployments behind proxies (or streaming implementations
+// that use Content-Length, which is mutually exclusive with
+// Transfer-Encoding:chunked). It composes with WithWriteContentLength: that
+// option still writes Content-Length on buffered responses without trailers.
+// This option itself never adds Content-Length headers, so it should be used
+// with caution.
 func WithDisableChunkedEncoding() ServeMuxOption {
 	return func(mux *ServeMux) {
-		mux.disableChunkedEncoding = true
+		mux.mutate("WithDisableChunkedEncoding", func() {
+			mux.cfg.disableChunkedEncoding = true
+		})
 	}
 }
 
@@ -150,16 +177,26 @@ func WithDisableChunkedEncoding() ServeMuxOption {
 // generated routes and routes registered with HandlePath.
 func WithStrictDeepWildcardMatching() ServeMuxOption {
 	return func(mux *ServeMux) {
-		mux.strictDeepWildcard = true
+		mux.mutate("WithStrictDeepWildcardMatching", func() {
+			mux.cfg.strictDeepWildcard = true
+		})
 	}
 }
 
 // SetQueryParameterParser sets the query parameter parser, used to populate message from query parameters.
 // Configuring this will mean the generated OpenAPI output is no longer correct, and it should be
 // done with careful consideration.
+//
+// It is a single-valued option: declaring it twice makes NewServeMux panic
+// and names the two conflicting options.
 func SetQueryParameterParser(queryParameterParser QueryParameterParser) ServeMuxOption {
 	return func(serveMux *ServeMux) {
-		currentQueryParser = queryParameterParser
+		if queryParameterParser == nil {
+			return
+		}
+		serveMux.declareScalar(slotQueryParameterParser, "SetQueryParameterParser", func() {
+			serveMux.queryParser = queryParameterParser
+		})
 	}
 }
 
@@ -206,7 +243,12 @@ func WithIncomingHeaderMatcher(fn HeaderMatcherFunc) ServeMuxOption {
 	}
 
 	return func(mux *ServeMux) {
-		mux.incomingHeaderMatcher = fn
+		if fn == nil {
+			return
+		}
+		mux.declareScalar(slotIncomingHeaderMatcher, "WithIncomingHeaderMatcher", func() {
+			mux.cfg.incomingHeaderMatcher = fn
+		})
 	}
 }
 
@@ -232,7 +274,12 @@ func (fn HeaderMatcherFunc) matchedMalformedHeaders() []string {
 // matcher should return the modified header.
 func WithOutgoingHeaderMatcher(fn HeaderMatcherFunc) ServeMuxOption {
 	return func(mux *ServeMux) {
-		mux.outgoingHeaderMatcher = fn
+		if fn == nil {
+			return
+		}
+		mux.declareScalar(slotOutgoingHeaderMatcher, "WithOutgoingHeaderMatcher", func() {
+			mux.cfg.outgoingHeaderMatcher = fn
+		})
 	}
 }
 
@@ -243,7 +290,12 @@ func WithOutgoingHeaderMatcher(fn HeaderMatcherFunc) ServeMuxOption {
 // matcher should return the modified header.
 func WithOutgoingTrailerMatcher(fn HeaderMatcherFunc) ServeMuxOption {
 	return func(mux *ServeMux) {
-		mux.outgoingTrailerMatcher = fn
+		if fn == nil {
+			return
+		}
+		mux.declareScalar(slotOutgoingTrailerMatcher, "WithOutgoingTrailerMatcher", func() {
+			mux.cfg.outgoingTrailerMatcher = fn
+		})
 	}
 }
 
@@ -251,18 +303,32 @@ func WithOutgoingTrailerMatcher(fn HeaderMatcherFunc) ServeMuxOption {
 //
 // This can be used by services that need to read from http.Request and modify gRPC context. A common use case
 // is reading token from cookie and adding it in gRPC context.
+//
+// Annotators are list options: repeated declarations keep append semantics
+// and run in declaration order.
 func WithMetadata(annotator func(context.Context, *http.Request) metadata.MD) ServeMuxOption {
 	return func(serveMux *ServeMux) {
-		serveMux.metadataAnnotators = append(serveMux.metadataAnnotators, annotator)
+		serveMux.mutate("WithMetadata", func() {
+			serveMux.metadataAnnotators = append(serveMux.metadataAnnotators, annotator)
+		})
 	}
 }
 
 // WithErrorHandler returns a ServeMuxOption for configuring a custom error handler.
 //
 // This can be used to configure a custom error response.
+//
+// It is a single-valued option: declaring it twice makes NewServeMux panic
+// and names the two conflicting options. Compose handlers yourself if one
+// handler needs to wrap another.
 func WithErrorHandler(fn ErrorHandlerFunc) ServeMuxOption {
 	return func(serveMux *ServeMux) {
-		serveMux.errorHandler = fn
+		if fn == nil {
+			return
+		}
+		serveMux.declareScalar(slotErrorHandler, "WithErrorHandler", func() {
+			serveMux.cfg.errorHandler = fn
+		})
 	}
 }
 
@@ -276,7 +342,12 @@ func WithErrorHandler(fn ErrorHandlerFunc) ServeMuxOption {
 // final message will include the error details returned by the stream error handler.
 func WithStreamErrorHandler(fn StreamErrorHandlerFunc) ServeMuxOption {
 	return func(serveMux *ServeMux) {
-		serveMux.streamErrorHandler = fn
+		if fn == nil {
+			return
+		}
+		serveMux.declareScalar(slotStreamErrorHandler, "WithStreamErrorHandler", func() {
+			serveMux.cfg.streamErrorHandler = fn
+		})
 	}
 }
 
@@ -286,14 +357,27 @@ func WithStreamErrorHandler(fn StreamErrorHandlerFunc) ServeMuxOption {
 // The following error codes: StatusMethodNotAllowed StatusNotFound StatusBadRequest
 func WithRoutingErrorHandler(fn RoutingErrorHandlerFunc) ServeMuxOption {
 	return func(serveMux *ServeMux) {
-		serveMux.routingErrorHandler = fn
+		if fn == nil {
+			return
+		}
+		serveMux.declareScalar(slotRoutingErrorHandler, "WithRoutingErrorHandler", func() {
+			serveMux.cfg.routingErrorHandler = fn
+		})
 	}
 }
 
 // WithDisablePathLengthFallback returns a ServeMuxOption for disable path length fallback.
+//
+// It only disables the implicit fallback that routes a POST request with
+// Content-Type application/x-www-form-urlencoded to a matching GET handler.
+// It does not change X-HTTP-Method-Override handling: an explicit method
+// override remains available on form POSTs unless
+// WithDisableHTTPMethodOverride is also declared.
 func WithDisablePathLengthFallback() ServeMuxOption {
 	return func(serveMux *ServeMux) {
-		serveMux.disablePathLengthFallback = true
+		serveMux.mutate("WithDisablePathLengthFallback", func() {
+			serveMux.cfg.disablePathLengthFallback = true
+		})
 	}
 }
 
@@ -303,17 +387,32 @@ func WithDisablePathLengthFallback() ServeMuxOption {
 // When this option is used, the mux will no longer allow POST requests with
 // the X-HTTP-Method-Override header to override the HTTP method. The path
 // length fallback (POST with application/x-www-form-urlencoded falling back
-// to a matching GET handler) is not affected by this option.
+// to a matching GET handler) is not affected by this option, and this option
+// is not affected by WithDisablePathLengthFallback: each switch has a
+// deterministic result on its own, regardless of declaration order.
 func WithDisableHTTPMethodOverride() ServeMuxOption {
 	return func(serveMux *ServeMux) {
-		serveMux.disableHTTPMethodOverride = true
+		serveMux.mutate("WithDisableHTTPMethodOverride", func() {
+			serveMux.cfg.disableHTTPMethodOverride = true
+		})
 	}
 }
 
-// WithWriteContentLength returns a ServeMuxOption to enable writing content length on non-streaming responses
+// WithWriteContentLength returns a ServeMuxOption to enable writing content
+// length on buffered responses: both regular unary responses and error
+// responses get Content-Length set whenever their length is known, with the
+// same rule on both paths.
+//
+// Streaming responses never carry Content-Length (their length is not known
+// ahead of time), and a response that has to forward trailers deterministically
+// gets no Content-Length, because Content-Length and chunked trailer framing
+// are mutually exclusive per RFC 7230. It composes with
+// WithDisableChunkedEncoding.
 func WithWriteContentLength() ServeMuxOption {
 	return func(serveMux *ServeMux) {
-		serveMux.writeContentLength = true
+		serveMux.mutate("WithWriteContentLength", func() {
+			serveMux.cfg.writeContentLength = true
+		})
 	}
 }
 
@@ -334,7 +433,7 @@ func WithHealthEndpointAt(healthCheckClient grpc_health_v1.HealthClient, endpoin
 				_, outboundMarshaler := MarshalerForRequest(s, r)
 				annotatedContext, err := AnnotateContext(r.Context(), s, r, grpc_health_v1.Health_Check_FullMethodName, WithHTTPPathPattern(endpointPath))
 				if err != nil {
-					s.errorHandler(r.Context(), s, outboundMarshaler, w, r, err)
+					s.cfg.errorHandler(r.Context(), s, outboundMarshaler, w, r, err)
 					return
 				}
 
@@ -344,7 +443,7 @@ func WithHealthEndpointAt(healthCheckClient grpc_health_v1.HealthClient, endpoin
 				}, grpc.Header(&md.HeaderMD), grpc.Trailer(&md.TrailerMD))
 				annotatedContext = NewServerMetadataContext(annotatedContext, md)
 				if err != nil {
-					s.errorHandler(annotatedContext, s, outboundMarshaler, w, r, err)
+					s.cfg.errorHandler(annotatedContext, s, outboundMarshaler, w, r, err)
 					return
 				}
 
@@ -358,7 +457,7 @@ func WithHealthEndpointAt(healthCheckClient grpc_health_v1.HealthClient, endpoin
 						err = status.Error(codes.NotFound, resp.String())
 					}
 
-					s.errorHandler(annotatedContext, s, outboundMarshaler, w, r, err)
+					s.cfg.errorHandler(annotatedContext, s, outboundMarshaler, w, r, err)
 					return
 				}
 
@@ -375,31 +474,35 @@ func WithHealthzEndpoint(healthCheckClient grpc_health_v1.HealthClient) ServeMux
 }
 
 // NewServeMux returns a new ServeMux whose internal mapping is empty.
+//
+// All options are resolved once here and the result is frozen into an
+// immutable snapshot shared by every request. The same set of options yields
+// the same gateway no matter the declaration order (list options keep append
+// semantics). Two options that cannot take effect together (for example
+// WithUnescapingMode declared twice with different values) make NewServeMux
+// panic, with an error naming the two conflicting options: a failed
+// construction returns no ServeMux and leaves no observable partial routes.
 func NewServeMux(opts ...ServeMuxOption) *ServeMux {
 	serveMux := &ServeMux{
-		handlers:                make(map[string][]handler),
-		forwardResponseOptions:  make([]func(context.Context, http.ResponseWriter, proto.Message) error, 0),
-		forwardResponseRewriter: func(ctx context.Context, response proto.Message) (any, error) { return response, nil },
-		marshalers:              makeMarshalerMIMERegistry(),
-		errorHandler:            DefaultHTTPErrorHandler,
-		streamErrorHandler:      DefaultStreamErrorHandler,
-		routingErrorHandler:     DefaultRoutingErrorHandler,
-		unescapingMode:          UnescapingModeDefault,
+		handlers:               make(map[string][]handler),
+		forwardResponseOptions: make([]func(context.Context, http.ResponseWriter, proto.Message) error, 0),
+		marshalers:             makeMarshalerMIMERegistry(),
+		cfg:                    &muxConfig{unescapingMode: UnescapingModeDefault},
+		declared:               make(map[muxOptionSlot]string),
 	}
 
+	// A conflicting declaration panics while "serveMux" is still a local
+	// value: nothing has returned it, and routes registered by earlier
+	// options (for example WithHealthEndpointAt) live only on the abandoned
+	// mux, so no half-initialized gateway escapes and no partial route set is
+	// observable.
 	for _, opt := range opts {
 		opt(serveMux)
 	}
 
-	if serveMux.incomingHeaderMatcher == nil {
-		serveMux.incomingHeaderMatcher = DefaultHeaderMatcher
-	}
-	if serveMux.outgoingHeaderMatcher == nil {
-		serveMux.outgoingHeaderMatcher = defaultOutgoingHeaderMatcher
-	}
-	if serveMux.outgoingTrailerMatcher == nil {
-		serveMux.outgoingTrailerMatcher = defaultOutgoingTrailerMatcher
-	}
+	// Fill the default hooks and freeze the resolved snapshot before any
+	// request can observe the mux.
+	serveMux.freeze()
 
 	// Options such as WithHealthEndpointAt register handlers while the options
 	// are still being applied, so they were wrapped with only the middlewares
@@ -448,12 +551,12 @@ func (s *ServeMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	path := r.URL.Path
 	if !strings.HasPrefix(path, "/") {
 		_, outboundMarshaler := MarshalerForRequest(s, r)
-		s.routingErrorHandler(ctx, s, outboundMarshaler, w, r, http.StatusBadRequest)
+		s.cfg.routingErrorHandler(ctx, s, outboundMarshaler, w, r, http.StatusBadRequest)
 		return
 	}
 
 	// TODO(v3): remove UnescapingModeLegacy
-	unescapingMode := s.unescapingMode
+	unescapingMode := s.cfg.unescapingMode
 	if unescapingMode != UnescapingModeLegacy {
 		if r.URL.RawPath != "" {
 			path = r.URL.RawPath
@@ -466,11 +569,15 @@ func (s *ServeMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	if override := r.Header.Get("X-HTTP-Method-Override"); override != "" && !s.disableHTTPMethodOverride && s.isPathLengthFallback(r) {
+	// X-HTTP-Method-Override availability is decided by its own switch
+	// (methodOverrideAllowed) and never by the path-length-fallback switch,
+	// so disabling the fallback cannot make the override silently
+	// unavailable.
+	if override := r.Header.Get("X-HTTP-Method-Override"); override != "" && s.cfg.methodOverrideAllowed(r) {
 		if err := r.ParseForm(); err != nil {
 			_, outboundMarshaler := MarshalerForRequest(s, r)
 			sterr := status.Error(codes.InvalidArgument, err.Error())
-			s.errorHandler(ctx, s, outboundMarshaler, w, r, sterr)
+			s.cfg.errorHandler(ctx, s, outboundMarshaler, w, r, sterr)
 			return
 		}
 		r.Method = strings.ToUpper(override)
@@ -524,12 +631,12 @@ func (s *ServeMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			comps[len(comps)-1], verb = lastPathComponent[:idx], lastPathComponent[idx+1:]
 		}
 
-		pathParams, err := h.pat.matchAndEscape(comps, verb, unescapingMode, s.strictDeepWildcard)
+		pathParams, err := h.pat.matchAndEscape(comps, verb, unescapingMode, s.cfg.strictDeepWildcard)
 		if err != nil {
 			var mse MalformedSequenceError
 			if ok := errors.As(err, &mse); ok {
 				_, outboundMarshaler := MarshalerForRequest(s, r)
-				s.errorHandler(ctx, s, outboundMarshaler, w, r, &HTTPStatusError{
+				s.cfg.errorHandler(ctx, s, outboundMarshaler, w, r, &HTTPStatusError{
 					HTTPStatus: http.StatusBadRequest,
 					Err:        mse,
 				})
@@ -580,12 +687,12 @@ func (s *ServeMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				comps[len(comps)-1], verb = lastPathComponent[:idx], lastPathComponent[idx+1:]
 			}
 
-			pathParams, err := h.pat.matchAndEscape(comps, verb, unescapingMode, s.strictDeepWildcard)
+			pathParams, err := h.pat.matchAndEscape(comps, verb, unescapingMode, s.cfg.strictDeepWildcard)
 			if err != nil {
 				var mse MalformedSequenceError
 				if ok := errors.As(err, &mse); ok {
 					_, outboundMarshaler := MarshalerForRequest(s, r)
-					s.errorHandler(ctx, s, outboundMarshaler, w, r, &HTTPStatusError{
+					s.cfg.errorHandler(ctx, s, outboundMarshaler, w, r, &HTTPStatusError{
 						HTTPStatus: http.StatusBadRequest,
 						Err:        mse,
 					})
@@ -601,20 +708,20 @@ func (s *ServeMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				if err := r.ParseForm(); err != nil {
 					_, outboundMarshaler := MarshalerForRequest(s, r)
 					sterr := status.Error(codes.InvalidArgument, err.Error())
-					s.errorHandler(ctx, s, outboundMarshaler, w, r, sterr)
+					s.cfg.errorHandler(ctx, s, outboundMarshaler, w, r, sterr)
 					return
 				}
 				s.handleHandler(h, w, r, pathParams)
 				return
 			}
 			_, outboundMarshaler := MarshalerForRequest(s, r)
-			s.routingErrorHandler(ctx, s, outboundMarshaler, w, r, http.StatusMethodNotAllowed)
+			s.cfg.routingErrorHandler(ctx, s, outboundMarshaler, w, r, http.StatusMethodNotAllowed)
 			return
 		}
 	}
 
 	_, outboundMarshaler := MarshalerForRequest(s, r)
-	s.routingErrorHandler(ctx, s, outboundMarshaler, w, r, http.StatusNotFound)
+	s.cfg.routingErrorHandler(ctx, s, outboundMarshaler, w, r, http.StatusNotFound)
 }
 
 // GetForwardResponseOptions returns the ForwardResponseOptions associated with this ServeMux.
@@ -623,9 +730,9 @@ func (s *ServeMux) GetForwardResponseOptions() []func(context.Context, http.Resp
 }
 
 func (s *ServeMux) isPathLengthFallback(r *http.Request) bool {
-	// Like net/http's ParseForm, ignore parameters such as charset.
-	mediaType, _, err := mime.ParseMediaType(r.Header.Get("Content-Type"))
-	return !s.disablePathLengthFallback && r.Method == "POST" && err == nil && mediaType == "application/x-www-form-urlencoded"
+	// The fallback switch only gates this implicit POST -> GET fallback. It
+	// does not gate X-HTTP-Method-Override (see muxConfig.methodOverrideAllowed).
+	return !s.cfg.disablePathLengthFallback && r.Method == http.MethodPost && isFormContentType(r)
 }
 
 type handler struct {

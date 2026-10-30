@@ -28,7 +28,10 @@ func ForwardResponseStream(ctx context.Context, mux *ServeMux, marshaler Marshal
 	}
 	handleForwardResponseServerMetadata(w, mux, md)
 
-	if !mux.disableChunkedEncoding {
+	// The chunk marker is decided by the construction-time snapshot. With
+	// WithDisableChunkedEncoding the streaming path never writes it, matching
+	// the unary and error paths.
+	if mux.cfg.writeChunkMarker(true, false) {
 		w.Header().Set("Transfer-Encoding", "chunked")
 	}
 	if err := handleForwardResponseOptions(ctx, w, nil, opts); err != nil {
@@ -58,7 +61,7 @@ func ForwardResponseStream(ctx context.Context, mux *ServeMux, marshaler Marshal
 			return
 		}
 
-		respRw, err := mux.forwardResponseRewriter(ctx, resp)
+		respRw, err := mux.cfg.forwardResponseRewriter(ctx, resp)
 		if err != nil {
 			grpclog.Errorf("Rewrite error: %v", err)
 			handleForwardResponseStreamError(ctx, wroteHeader, marshaler, w, req, mux, err, delimiter)
@@ -120,7 +123,7 @@ func ForwardResponseStream(ctx context.Context, mux *ServeMux, marshaler Marshal
 
 func handleForwardResponseServerMetadata(w http.ResponseWriter, mux *ServeMux, md ServerMetadata) {
 	for k, vs := range md.HeaderMD {
-		if h, ok := mux.outgoingHeaderMatcher(k); ok {
+		if h, ok := mux.cfg.outgoingHeaderMatcher(k); ok {
 			for _, v := range vs {
 				w.Header().Add(h, v)
 			}
@@ -130,7 +133,7 @@ func handleForwardResponseServerMetadata(w http.ResponseWriter, mux *ServeMux, m
 
 func handleForwardResponseTrailerHeader(w http.ResponseWriter, mux *ServeMux, md ServerMetadata) {
 	for k := range md.TrailerMD {
-		if h, ok := mux.outgoingTrailerMatcher(k); ok {
+		if h, ok := mux.cfg.outgoingTrailerMatcher(k); ok {
 			w.Header().Add("Trailer", textproto.CanonicalMIMEHeaderKey(h))
 		}
 	}
@@ -138,7 +141,7 @@ func handleForwardResponseTrailerHeader(w http.ResponseWriter, mux *ServeMux, md
 
 func handleForwardResponseTrailer(w http.ResponseWriter, mux *ServeMux, md ServerMetadata) {
 	for k, vs := range md.TrailerMD {
-		if h, ok := mux.outgoingTrailerMatcher(k); ok {
+		if h, ok := mux.cfg.outgoingTrailerMatcher(k); ok {
 			for _, v := range vs {
 				w.Header().Add(h, v)
 			}
@@ -166,9 +169,15 @@ func ForwardResponseMessage(ctx context.Context, mux *ServeMux, marshaler Marsha
 	// agent to receive.
 	doForwardTrailers := requestAcceptsTrailers(req)
 
+	// The framing markers come from the snapshot resolved at construction.
+	// WithDisableChunkedEncoding wins over trailer forwarding (no marker is
+	// written even when trailers are forwarded); Content-Length never shares
+	// a response with trailers (see writeContentLengthHeader).
 	if ok && doForwardTrailers {
 		handleForwardResponseTrailerHeader(w, mux, md)
-		w.Header().Set("Transfer-Encoding", "chunked")
+		if mux.cfg.writeChunkMarker(false, true) {
+			w.Header().Set("Transfer-Encoding", "chunked")
+		}
 	}
 
 	contentType := marshaler.ContentType(resp)
@@ -178,7 +187,7 @@ func ForwardResponseMessage(ctx context.Context, mux *ServeMux, marshaler Marsha
 		HTTPError(ctx, mux, marshaler, w, req, err)
 		return
 	}
-	respRw, err := mux.forwardResponseRewriter(ctx, resp)
+	respRw, err := mux.cfg.forwardResponseRewriter(ctx, resp)
 	if err != nil {
 		grpclog.Errorf("Rewrite error: %v", err)
 		HTTPError(ctx, mux, marshaler, w, req, err)
@@ -196,7 +205,7 @@ func ForwardResponseMessage(ctx context.Context, mux *ServeMux, marshaler Marsha
 		return
 	}
 
-	if !doForwardTrailers && mux.writeContentLength {
+	if mux.cfg.writeContentLengthHeader(false, doForwardTrailers) {
 		w.Header().Set("Content-Length", strconv.Itoa(len(buf)))
 	}
 
@@ -227,7 +236,7 @@ func handleForwardResponseOptions(ctx context.Context, w http.ResponseWriter, re
 }
 
 func handleForwardResponseStreamError(ctx context.Context, wroteHeader bool, marshaler Marshaler, w http.ResponseWriter, req *http.Request, mux *ServeMux, err error, delimiter []byte) {
-	st := mux.streamErrorHandler(ctx, err)
+	st := mux.cfg.streamErrorHandler(ctx, err)
 	msg := errorChunk(st)
 	if !wroteHeader {
 		w.Header().Set("Content-Type", marshaler.ContentType(msg))
